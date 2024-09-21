@@ -1,6 +1,7 @@
 import dbConnect from '@/lib/mongodb'; 
 import Budget from '@/models/Budget'; 
 
+// GET all budgets
 export async function GET(req) {
   try {
     await dbConnect(); 
@@ -12,15 +13,30 @@ export async function GET(req) {
   }
 }
 
+// POST new budget
+// POST new budget(s)
 export async function POST(req) {
   try {
-    await dbConnect(); 
-    const budgetData = await req.json(); 
-    const newBudget = await Budget.create(budgetData); 
-    return new Response(JSON.stringify(newBudget), { status: 201 });
+    await dbConnect();
+    const budgetsData = await req.json();
+
+    const budgetArray = Array.isArray(budgetsData) ? budgetsData : [budgetsData];
+
+    const promises = budgetArray.map(async (budgetData) => {
+      const existingBudget = await Budget.findOneAndUpdate(
+        { month: budgetData.month },
+        { amount: budgetData.amount },
+        { new: true, upsert: true }
+      );
+      return existingBudget;
+    });
+
+    const updatedBudgets = await Promise.all(promises);
+    return new Response(JSON.stringify(updatedBudgets), { status: 200 });
   } catch (error) {
-    console.error('Error creating budget data:', error);
+    console.error('Error saving budget data:', error);
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
   }
 }
+
 
