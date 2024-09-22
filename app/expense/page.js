@@ -13,6 +13,7 @@ export default function ExpensePage() {
   const [editId, setEditId] = useState(null); // For tracking which expense to edit
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false); // For delete confirmation
+  const [incomelist, setIncomelist] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -26,8 +27,22 @@ export default function ExpensePage() {
         console.error('Error fetching expenses:', error);
       }
     }
+    async function fetchIncome() {
+      try {
+        const response = await fetch("/api/income");
+        if (!response.ok) throw new Error('Error fetching income data');
+        const data = await response.json();
+        setIncomelist(data);
+    
+      } catch (error) {
+        setError('Error fetching income data. Please try again later.');
+        console.error('Error fetching income:', error);
+      }
+    }
 
+    // console.log(incomelist)
     fetchData();
+    fetchIncome();
   }, []);
 
   const handleSubmit = async (event) => {
@@ -114,9 +129,11 @@ export default function ExpensePage() {
         setEditId(null);
         setShowModal(false);
       } else {
+        console.log('response ok but error')
         setError('Error deleting expense.');
       }
     } catch (error) {
+      console.log('response not ok')
       setError('Error deleting expense.');
     }
   };
@@ -130,6 +147,16 @@ export default function ExpensePage() {
     setShowModal(false);
     setEditId(null);
   };
+
+  const totalIncome = incomelist.reduce((total, income) => {
+    const amount = parseFloat(income.amount); // Ensure it's a number
+    return total + (isNaN(amount) ? 0 : amount); // Fallback to 0 if NaN
+  }, 0);
+  
+
+  const totalExpenses = expenses.reduce((total, expense) => total + parseFloat(expense.amount), 0);
+  const balance = totalIncome - totalExpenses;
+
 
   return (
     <Container>
@@ -225,7 +252,12 @@ export default function ExpensePage() {
           {/* Table for displaying expenses */}
           <Card className="shadow-sm">
             <Card.Body>
-              <Card.Title>Expense List</Card.Title>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Card.Title>Expense List</Card.Title>
+                <span style={{ fontSize: '1rem', color: '#28a745' }}>
+                  (Balance: {balance.toFixed(2)}B)
+                </span>
+              </div>
               <Table striped bordered hover responsive className="mt-3">
                 <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
                   <tr>
