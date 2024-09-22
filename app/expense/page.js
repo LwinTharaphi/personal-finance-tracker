@@ -15,6 +15,10 @@ export default function ExpensePage() {
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false); // For delete confirmation
   const [incomelist, setIncomelist] = useState([]);
+  const [filteredExpense, setFilteredExpense] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
 
   useEffect(() => {
     async function fetchData() {
@@ -41,10 +45,21 @@ export default function ExpensePage() {
       }
     }
 
+    const filterExpenseByMonth = () => {
+      const filtered = expenses.filter((expense)=>{
+        const expenseDate = new Date(expense.date)
+        return expenseDate.getMonth() === selectedMonth && expenseDate.getFullYear() === selectedYear;
+      });
+      setFilteredExpense(filtered);
+    };
+
     // console.log(incomelist)
+    filterExpenseByMonth();
     fetchData();
     fetchIncome();
-  }, []);
+
+    return ()=> {};
+  }, [expenses,selectedMonth,selectedYear]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -149,14 +164,43 @@ export default function ExpensePage() {
     setEditId(null);
   };
 
-  const totalIncome = incomelist.reduce((total, income) => {
-    const amount = parseFloat(income.amount); // Ensure it's a number
-    return total + (isNaN(amount) ? 0 : amount); // Fallback to 0 if NaN
-  }, 0);
+  const calculateTotalIncome = () => {
+    return incomelist
+      .filter(income => {
+        const incomeDate = new Date(income.date);
+        return incomeDate.getMonth() === selectedMonth && incomeDate.getFullYear() === selectedYear;
+      })
+      .reduce((total, income) => total + income.amount, 0);
+  };
   
+  const handlePreviousMonth = () => {
+    setSelectedMonth((prevMonth) => {
+      prevMonth = prevMonth - 1;
+      if (prevMonth < 0) {
+        setSelectedYear(selectedYear - 1);
+        return 11;
+      }
+      return prevMonth;
+    });
+  };
 
-  const totalExpenses = expenses.reduce((total, expense) => total + parseFloat(expense.amount), 0);
-  const balance = totalIncome - totalExpenses;
+  const handleNextMonth = () => {
+
+    // Increment selectedMonth, handling year rollover
+    setSelectedMonth((prevMonth) => {
+      const nextMonth = prevMonth + 1;
+      if (nextMonth > 11) {
+        setSelectedYear(selectedYear + 1);
+        return 0;
+      }
+      return nextMonth;
+    });
+  };
+
+  const totalIncomeByMonth = calculateTotalIncome(); // Calculate total income for the selected month
+
+  const totalExpensesByMonth = filteredExpense.reduce((total, expense) => total + parseFloat(expense.amount), 0);
+  const balanceByMonth = totalIncomeByMonth - totalExpensesByMonth;
 
 
   return (
@@ -259,10 +303,16 @@ export default function ExpensePage() {
             <Card className="shadow-sm">
               <Card.Body>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Card.Title>Expense List</Card.Title>
+                  <Button variant="secondary" onClick={handlePreviousMonth}>
+                    ◀️
+                  </Button>
+                  <Card.Title>Expense List (Month: {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} )</Card.Title>
                   <span style={{ fontSize: '1rem', color: '#28a745' }}>
-                    (Balance: {balance.toFixed(2)}B)
+                    (Balance: {balanceByMonth.toFixed(2)}B)
                   </span>
+                  <Button variant="secondary" onClick={handleNextMonth}>
+                    ▶️
+                  </Button>
                 </div>
                 <Table striped bordered hover responsive className="mt-3">
                   <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
@@ -275,7 +325,7 @@ export default function ExpensePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {expenses.map((expense) => (
+                    {filteredExpense.map((expense) => (
                       <tr key={expense._id}>
                         <td>{expense.category}</td>
                         <td>{expense.amount.toFixed(2)}B</td>
