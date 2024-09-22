@@ -14,6 +14,9 @@ export default function IncomePage() {
   const [editId, setEditId] = useState(null); // For tracking which income to edit
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false); // For delete confirmation
+  const [filteredIncome, setFilteredIncome] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
     async function fetchData() {
@@ -28,8 +31,17 @@ export default function IncomePage() {
       }
     }
 
+    const filterIncomeByMonth = () => {
+      const filtered = incomeList.filter((income)=>{
+        const incomeDate = new Date(income.date)
+        return incomeDate.getMonth() === selectedMonth && incomeDate.getFullYear() === selectedYear;
+      });
+      setFilteredIncome(filtered);
+    };
+
     fetchData();
-  }, []);
+    filterIncomeByMonth();
+  }, [incomeList,selectedMonth,selectedYear]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -132,6 +144,30 @@ export default function IncomePage() {
     setEditId(null);
   };
 
+  const handlePreviousMonth = () => {
+    setSelectedMonth((prevMonth) => {
+      prevMonth = prevMonth - 1;
+      if (prevMonth < 0) {
+        setSelectedYear(selectedYear - 1);
+        return 11;
+      }
+      return prevMonth;
+    });
+  };
+
+  const handleNextMonth = () => {
+
+    // Increment selectedMonth, handling year rollover
+    setSelectedMonth((prevMonth) => {
+      const nextMonth = prevMonth + 1;
+      if (nextMonth > 11) {
+        setSelectedYear(selectedYear + 1);
+        return 0;
+      }
+      return nextMonth;
+    });
+  };
+
   return (
     <Container fluid>
       <Row>
@@ -228,7 +264,15 @@ export default function IncomePage() {
             {/* Table for displaying income records */}
             <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title>Income List</Card.Title>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Button variant="secondary" onClick={handlePreviousMonth}>
+                    ◀️
+                  </Button>
+                  <Card.Title>Income List (Month: {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} )</Card.Title>
+                  <Button variant="secondary" onClick={handleNextMonth}>
+                      ▶️
+                    </Button>
+                </div>
                 <Table striped bordered hover responsive className="mt-3">
                   <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
                     <tr>
@@ -240,7 +284,7 @@ export default function IncomePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {incomeList.map((income) => (
+                    {filteredIncome.map((income) => (
                       <tr key={income._id}>
                         <td>{income.type}</td>
                         <td>{income.amount.toFixed(2)}</td>
