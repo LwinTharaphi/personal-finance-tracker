@@ -90,10 +90,18 @@ export default function ExpensePage() {
   const handleEdit = (expense) => {
     setCategory(expense.category);
     setAmount(expense.amount);
-    setDate(expense.date);
+    setDate(expense.date.split('T')[0]);
     setDescription(expense.description);
     setEditId(expense._id);
   };
+
+  const handleCancelEdit = ()=>{
+    setCategory('');
+    setAmount('');
+    setDate('');
+    setDescription('');
+    setEditId('');
+  }
 
   const handleDelete = async () => {
     try {
@@ -192,9 +200,23 @@ export default function ExpensePage() {
                 </Row>
 
                 <div className="d-grid">
-                  <Button variant={editId ? 'warning' : 'primary'} type="submit" size="lg">
+                  {/* <Button variant={editId ? 'warning' : 'primary'} type="submit" size="lg">
                     {editId ? 'Update Expense' : 'Add Expense'}
-                  </Button>
+                  </Button> */}
+                  {editId? (
+                    <>
+                    <Button variant='warning' type='submit' size='lg'>
+                      Update Expense
+                    </Button>
+                    <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
+                      Cancel
+                    </Button>
+                    </>
+                  ): (
+                    <Button variant='primary' type='submit' size='lg'>
+                      Add Expense
+                    </Button>
+                  )}
                 </div>
               </Form>
             </Card.Body>
