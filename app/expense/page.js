@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Table, Form, Button, Container, Row, Col, Card, Alert, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Sidebar from '../components/Sidebar';
 
 export default function ExpensePage() {
   const [expenses, setExpenses] = useState([]);
@@ -159,146 +160,154 @@ export default function ExpensePage() {
 
 
   return (
-    <Container>
-      <Row className="my-5">
-        <Col md={{ span: 8, offset: 2 }}>
-          <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Expense Tracker</h1>
+    <Container fluid>
+      <Row>
+        <Col md={3} className='p-0'>
+        <Sidebar/>
+        </Col>
+        <Col>
+          <Row className="my-5">
+          <Col md={{ span: 8, offset: 2 }}>
+            <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Expense Tracker</h1>
 
-          {error && <Alert variant="danger">{error}</Alert>}
+            {error && <Alert variant="danger">{error}</Alert>}
 
-          {/* Card for form */}
-          <Card className="mb-4 shadow-sm" style={{ backgroundColor: '#f9f9f9' }}>
-            <Card.Body>
-              <Card.Title className="mb-3">{editId ? 'Edit Expense' : 'Add New Expense'}</Card.Title>
-              <Form onSubmit={handleSubmit}>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group controlId="formCategory" className="mb-3">
-                      <Form.Label>Category</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter category"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
+            {/* Card for form */}
+            <Card className="mb-4 shadow-sm" style={{ backgroundColor: '#f9f9f9' }}>
+              <Card.Body>
+                <Card.Title className="mb-3">{editId ? 'Edit Expense' : 'Add New Expense'}</Card.Title>
+                <Form onSubmit={handleSubmit}>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formCategory" className="mb-3">
+                        <Form.Label>Category</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter category"
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
 
-                  <Col md={6}>
-                    <Form.Group controlId="formAmount" className="mb-3">
-                      <Form.Label>Amount</Form.Label>
-                      <Form.Control
-                        type="number"
-                        step="0.01"
-                        placeholder="Enter amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formAmount" className="mb-3">
+                        <Form.Label>Amount</Form.Label>
+                        <Form.Control
+                          type="number"
+                          step="0.01"
+                          placeholder="Enter amount"
+                          value={amount}
+                          onChange={(e) => setAmount(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
-                <Row>
-                  <Col md={6}>
-                    <Form.Group controlId="formDate" className="mb-3">
-                      <Form.Label>Date</Form.Label>
-                      <Form.Control
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        required
-                      />
-                    </Form.Group>
-                  </Col>
+                  <Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formDate" className="mb-3">
+                        <Form.Label>Date</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
 
-                  <Col md={6}>
-                    <Form.Group controlId="formDescription" className="mb-3">
-                      <Form.Label>Description</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
+                    <Col md={6}>
+                      <Form.Group controlId="formDescription" className="mb-3">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter description"
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
 
-                <div className="d-grid">
-                  {/* <Button variant={editId ? 'warning' : 'primary'} type="submit" size="lg">
-                    {editId ? 'Update Expense' : 'Add Expense'}
-                  </Button> */}
-                  {editId? (
-                    <>
-                    <Button variant='warning' type='submit' size='lg'>
-                      Update Expense
-                    </Button>
-                    <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
-                      Cancel
-                    </Button>
-                    </>
-                  ): (
-                    <Button variant='primary' type='submit' size='lg'>
-                      Add Expense
-                    </Button>
-                  )}
+                  <div className="d-grid">
+                    {/* <Button variant={editId ? 'warning' : 'primary'} type="submit" size="lg">
+                      {editId ? 'Update Expense' : 'Add Expense'}
+                    </Button> */}
+                    {editId? (
+                      <>
+                      <Button variant='warning' type='submit' size='lg'>
+                        Update Expense
+                      </Button>
+                      <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
+                        Cancel
+                      </Button>
+                      </>
+                    ): (
+                      <Button variant='primary' type='submit' size='lg'>
+                        Add Expense
+                      </Button>
+                    )}
+                  </div>
+                </Form>
+              </Card.Body>
+            </Card>
+
+            {/* Table for displaying expenses */}
+            <Card className="shadow-sm">
+              <Card.Body>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Card.Title>Expense List</Card.Title>
+                  <span style={{ fontSize: '1rem', color: '#28a745' }}>
+                    (Balance: {balance.toFixed(2)}B)
+                  </span>
                 </div>
-              </Form>
-            </Card.Body>
-          </Card>
-
-          {/* Table for displaying expenses */}
-          <Card className="shadow-sm">
-            <Card.Body>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Card.Title>Expense List</Card.Title>
-                <span style={{ fontSize: '1rem', color: '#28a745' }}>
-                  (Balance: {balance.toFixed(2)}B)
-                </span>
-              </div>
-              <Table striped bordered hover responsive className="mt-3">
-                <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
-                  <tr>
-                    <th>Category</th>
-                    <th>Amount</th>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {expenses.map((expense) => (
-                    <tr key={expense._id}>
-                      <td>{expense.category}</td>
-                      <td>{expense.amount.toFixed(2)}B</td>
-                      <td>{new Date(expense.date).toLocaleDateString()}</td>
-                      <td>{expense.description}</td>
-                      <td>
-                        <Button
-                          variant="success"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => handleEdit(expense)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => openDeleteModal(expense._id)}
-                        >
-                          Delete
-                        </Button>
-                      </td>
+                <Table striped bordered hover responsive className="mt-3">
+                  <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
+                    <tr>
+                      <th>Category</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                      <th>Description</th>
+                      <th></th>
                     </tr>
-                  ))}
-                </tbody>
-              </Table>
-              {expenses.length === 0 && <p className="text-center">No expenses added yet.</p>}
-            </Card.Body>
-          </Card>
+                  </thead>
+                  <tbody>
+                    {expenses.map((expense) => (
+                      <tr key={expense._id}>
+                        <td>{expense.category}</td>
+                        <td>{expense.amount.toFixed(2)}B</td>
+                        <td>{new Date(expense.date).toLocaleDateString()}</td>
+                        <td>{expense.description}</td>
+                        <td>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => handleEdit(expense)}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => openDeleteModal(expense._id)}
+                          >
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+                {expenses.length === 0 && <p className="text-center">No expenses added yet.</p>}
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+
         </Col>
       </Row>
 

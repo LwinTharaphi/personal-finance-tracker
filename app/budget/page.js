@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Form, Modal, Card, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Sidebar from '../components/Sidebar';
 
 export default function BudgetPage() {
   const [budgets, setBudgets] = useState([]);
@@ -142,44 +143,53 @@ export default function BudgetPage() {
   };
 
   return (
-    <Container>
-      <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Budget List</h1>
-
-      {error && <Alert variant="danger">{error}</Alert>}
-
+    <Container fluid>
       <Row>
-        {months.map((month) => {
-          const budget = getBudgetByMonth(month);
-          return (
-            <Col key={month} sm={6} md={4} lg={3} className="mb-4">
-              <Card className="border border-primary shadow-sm">
-                <Card.Body>
-                  <Card.Title className="text-center mb-2 fw-bold">{month}</Card.Title>
-                  {budget ? (
-                    <>
-                      <Card.Text>Amount: ${budget.amount}</Card.Text>
+        <Col md={3} className='p-0'>
+        <Sidebar/>
+        </Col>
+        <Col>
+        <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Budget List</h1>
+
+        {error && <Alert variant="danger">{error}</Alert>}
+
+        <Row>
+          {months.map((month) => {
+            const budget = getBudgetByMonth(month);
+            return (
+              <Col key={month} sm={6} md={4} lg={3} className="mb-4">
+                <Card className="border border-primary shadow-sm">
+                  <Card.Body>
+                    <Card.Title className="text-center mb-2 fw-bold">{month}</Card.Title>
+                    {budget ? (
+                      <>
+                        <Card.Text>Amount: ${budget.amount}</Card.Text>
+                        <div className="d-flex justify-content-center">
+                          <Button variant="primary" size="sm" className="me-2" onClick={() => handleEditBudget(month)}>
+                            Update
+                          </Button>
+                          <Button variant="danger" size="sm" onClick={() => handleDeleteBudget(month)}>
+                            Delete
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
                       <div className="d-flex justify-content-center">
-                        <Button variant="primary" size="sm" className="me-2" onClick={() => handleEditBudget(month)}>
-                          Update
-                        </Button>
-                        <Button variant="danger" size="sm" onClick={() => handleDeleteBudget(month)}>
-                          Delete
+                        <Button variant="success" size="sm" onClick={() => handleAddBudget(month)}>
+                          Add Budget
                         </Button>
                       </div>
-                    </>
-                  ) : (
-                    <div className="d-flex justify-content-center">
-                      <Button variant="success" size="sm" onClick={() => handleAddBudget(month)}>
-                        Add Budget
-                      </Button>
-                    </div>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          );
-        })}
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
+        
+        </Col>
       </Row>
+
 
       <Modal show={selectedMonth !== null} onHide={() => setSelectedMonth(null)}>
         <Modal.Header closeButton>
