@@ -91,10 +91,18 @@ export default function IncomePage() {
   const handleEdit = (income) => {
     setType(income.type);
     setAmount(income.amount);
-    setDate(income.date);
+    setDate(income.date.split('T')[0]);
     setSource(income.source);
     setEditId(income._id);
   };
+
+  const handleCancelEdit = ()=>{
+    setType('');
+    setAmount('');
+    setDate('');
+    setSource('');
+    setEditId('');
+  }
 
   const handleDelete = async () => {
     try {
@@ -198,9 +206,20 @@ export default function IncomePage() {
                   </Row>
 
                   <div className="d-grid">
-                    <Button variant={editId ? 'warning' : 'primary'} type="submit" size="lg">
-                      {editId ? 'Update Income' : 'Add Income'}
-                    </Button>
+                    {editId? (
+                        <>
+                        <Button variant='warning' type='submit' size='lg'>
+                          Update Expense
+                        </Button>
+                        <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
+                          Cancel
+                        </Button>
+                        </>
+                      ): (
+                        <Button variant='primary' type='submit' size='lg'>
+                          Add Expense
+                        </Button>
+                      )}
                   </div>
                 </Form>
               </Card.Body>
