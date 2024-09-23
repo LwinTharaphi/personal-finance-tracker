@@ -1,35 +1,38 @@
 .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 250px;
-    background-color: #f8f9fa;
-    padding: 20px;
-    border: 1px solid #ddd;
-  }
-  
-  .sidebar-header {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
-  
-  .sidebar-username {
-    margin-bottom: 20px;
-  }
-  
-  .nav-link {
-    color: #333;
-    padding: 10px 15px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  .nav-link:hover {
-    background-color: #eee;
-  }
-  
-  .nav-link.active {
-    background-color: #ddd;
-  }
+  background-color: #cfd0d2; /* Light gray background */
+}
+
+.profile-section h4 {
+  color: #343a40; /* Darker gray for profile title */
+}
+
+.profile-section h5 {
+  color: #6c757d; /* Medium gray for user name */
+}
+
+.nav-links .nav-link {
+  color: #495057; /* Dark gray for nav links */
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 20px; /* Rounded shape for menu items */
+  margin-bottom: 12px; /* Spacing between menu items */
+  background-color: #e9ecef; /* Lighter gray background for the menu items */
+  text-align: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-links .nav-link:hover {
+  background-color: #ced4da; /* Slightly darker gray on hover */
+  color: #212529; /* Darker text on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow effect on hover */
+}
+
+.nav-links .nav-link.active {
+  background-color: #007bff; /* Blue for active menu */
+  color: #ffffff !important;
+}
+
+.sidebar-link {
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+}
