@@ -46,9 +46,9 @@ export default function Home() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
-      <Row>
-        <Col md={6} className="mx-auto">
+    <Container fluid className="d-flex justify-content-center align-items-center vh-100">
+      <Row className="w-100">
+        <Col xs={12} md={8} lg={5} className="mx-auto">
           <Card className="p-4 shadow">
             <Card.Body>
               <h2 className="text-center mb-4">{isLogin ? 'Login' : 'Sign Up'}</h2>
