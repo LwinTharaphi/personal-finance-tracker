@@ -1,9 +1,10 @@
-// pages/home.js
+// app/home/page.tsx
 
 "use client"; // Client component
 
 import { useState } from 'react';
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
+import { signIn } from "next-auth/react"; // Import signIn from NextAuth
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Home() {
@@ -15,11 +16,11 @@ export default function Home() {
     name: '', // Only needed for signup
   });
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
@@ -40,9 +41,13 @@ export default function Home() {
       // Handle successful login or signup
       console.log(result);
       alert(`${isLogin ? 'Login' : 'Signup'} successful!`);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     }
+  };
+
+  const handleGitHubSignIn = () => {
+    signIn('github'); // Redirect to GitHub for authentication
   };
 
   return (
@@ -106,6 +111,9 @@ export default function Home() {
                     {isLogin ? 'Sign Up' : 'Login'}
                   </Button>
                 </p>
+                <Button variant="secondary" onClick={handleGitHubSignIn} className="w-100">
+                  Sign in with GitHub
+                </Button>
               </div>
             </Card.Body>
           </Card>
