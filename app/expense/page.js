@@ -32,34 +32,35 @@ export default function ExpensePage() {
         console.error('Error fetching expenses:', error);
       }
     }
+
     async function fetchIncome() {
       try {
         const response = await fetch("/api/income");
         if (!response.ok) throw new Error('Error fetching income data');
         const data = await response.json();
         setIncomelist(data);
-    
       } catch (error) {
         setError('Error fetching income data. Please try again later.');
         console.error('Error fetching income:', error);
       }
     }
 
+    fetchData();
+    fetchIncome();
+  }, []); // Run only once when the component mounts
+
+  // Filter expenses based on selected month and year
+  useEffect(() => {
     const filterExpenseByMonth = () => {
-      const filtered = expenses.filter((expense)=>{
-        const expenseDate = new Date(expense.date)
+      const filtered = expenses.filter((expense) => {
+        const expenseDate = new Date(expense.date);
         return expenseDate.getMonth() === selectedMonth && expenseDate.getFullYear() === selectedYear;
       });
       setFilteredExpense(filtered);
     };
 
-    // console.log(incomelist)
     filterExpenseByMonth();
-    fetchData();
-    fetchIncome();
-
-    return ()=> {};
-  }, [expenses,selectedMonth,selectedYear]);
+  }, [expenses, selectedMonth, selectedYear]); 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -281,14 +282,14 @@ export default function ExpensePage() {
                       {editId ? 'Update Expense' : 'Add Expense'}
                     </Button> */}
                     {editId? (
-                      <>
+                      <div className="d-flex justify-content-center gap-2">
                       <Button variant='warning' type='submit' size='lg'>
-                        Update Expense
+                        Update 
                       </Button>
                       <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
                         Cancel
                       </Button>
-                      </>
+                    </div>
                     ): (
                       <Button variant='primary' type='submit' size='lg'>
                         Add Expense

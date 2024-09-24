@@ -163,7 +163,7 @@ export default function BudgetPage() {
                     <Card.Title className="text-center mb-2 fw-bold">{month}</Card.Title>
                     {budget ? (
                       <>
-                        <Card.Text>Amount: ${budget.amount}</Card.Text>
+                        <Card.Text>Amount: {budget.amount} B</Card.Text>
                         <div className="d-flex justify-content-center">
                           <Button variant="primary" size="sm" className="me-2" onClick={() => handleEditBudget(month)}>
                             Update

@@ -19,6 +19,7 @@ export default function IncomePage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
+    // Fetch income data only once
     async function fetchData() {
       try {
         const response = await fetch("/api/income");
@@ -30,18 +31,26 @@ export default function IncomePage() {
         console.error('Error fetching income:', error);
       }
     }
-
+  
+    fetchData();
+  }, []); // Empty dependency array to fetch income only once on mount
+  
+  // Filter income by month and year when incomeList, selectedMonth, or selectedYear change
+  useEffect(() => {
     const filterIncomeByMonth = () => {
-      const filtered = incomeList.filter((income)=>{
-        const incomeDate = new Date(income.date)
+      const filtered = incomeList.filter((income) => {
+        const incomeDate = new Date(income.date);
         return incomeDate.getMonth() === selectedMonth && incomeDate.getFullYear() === selectedYear;
       });
       setFilteredIncome(filtered);
     };
-
-    fetchData();
-    filterIncomeByMonth();
-  }, [incomeList,selectedMonth,selectedYear]);
+  
+    // Only run the filtering when the dependency changes
+    if (incomeList.length > 0) {
+      filterIncomeByMonth();
+    }
+  }, [incomeList, selectedMonth, selectedYear]); // Dependencies for filtering
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -171,7 +180,7 @@ export default function IncomePage() {
   return (
     <Container fluid>
       <Row>
-        <Col md={3}>
+        <Col md={3} className='p-0'>
         <Sidebar/>
         </Col>
         <Col>
@@ -243,17 +252,18 @@ export default function IncomePage() {
 
                   <div className="d-grid">
                     {editId? (
-                        <>
+                        <div className="d-flex justify-content-center gap-2">
                         <Button variant='warning' type='submit' size='lg'>
-                          Update Expense
+                          Update 
                         </Button>
                         <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
                           Cancel
                         </Button>
-                        </>
+                      </div>
+                      
                       ): (
                         <Button variant='primary' type='submit' size='lg'>
-                          Add Expense
+                          Add Income
                         </Button>
                       )}
                   </div>
@@ -287,7 +297,7 @@ export default function IncomePage() {
                     {filteredIncome.map((income) => (
                       <tr key={income._id}>
                         <td>{income.type}</td>
-                        <td>{income.amount.toFixed(2)}</td>
+                        <td>{income.amount.toFixed(2)}B</td>
                         <td>{new Date(income.date).toLocaleDateString()}</td>
                         <td>{income.source}</td>
                         <td>
