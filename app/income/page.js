@@ -31,10 +31,10 @@ export default function IncomePage() {
         console.error('Error fetching income:', error);
       }
     }
-  
+
     fetchData();
   }, []); // Empty dependency array to fetch income only once on mount
-  
+
   // Filter income by month and year when incomeList, selectedMonth, or selectedYear change
   useEffect(() => {
     const filterIncomeByMonth = () => {
@@ -44,13 +44,13 @@ export default function IncomePage() {
       });
       setFilteredIncome(filtered);
     };
-  
+
     // Only run the filtering when the dependency changes
     if (incomeList.length > 0) {
       filterIncomeByMonth();
     }
   }, [incomeList, selectedMonth, selectedYear]); // Dependencies for filtering
-  
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -117,7 +117,7 @@ export default function IncomePage() {
     setEditId(income._id);
   };
 
-  const handleCancelEdit = ()=>{
+  const handleCancelEdit = () => {
     setType('');
     setAmount('');
     setDate('');
@@ -176,156 +176,166 @@ export default function IncomePage() {
       return nextMonth;
     });
   };
+  const totalIncome = filteredIncome.reduce((acc, income) => acc + income.amount, 0).toFixed(2);
 
   return (
     <Container fluid>
       <Row>
         <Col md={3} className='p-0'>
-        <Sidebar/>
+          <Sidebar />
         </Col>
         <Col>
           <Row className="my-5">
             <Col md={{ span: 8, offset: 2 }}>
-            <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Income Tracker</h1>
+              <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Income Tracker</h1>
 
-            {error && <Alert variant="danger">{error}</Alert>}
+              {error && <Alert variant="danger">{error}</Alert>}
 
-            {/* Card for form */}
-            <Card className="mb-4 shadow-sm" style={{ backgroundColor: '#f9f9f9' }}>
-              <Card.Body>
-                <Card.Title className="mb-3">{editId ? 'Edit Income' : 'Add New Income'}</Card.Title>
-                <Form onSubmit={handleSubmit}>
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group controlId="formType" className="mb-3">
-                        <Form.Label>Type</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter income type"
-                          value={type}
-                          onChange={(e) => setType(e.target.value)}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
+              {/* Card for form */}
+              <Card className="mb-4 shadow-sm" style={{ backgroundColor: '#f9f9f9' }}>
+                <Card.Body>
+                  <Card.Title className="mb-3">{editId ? 'Edit Income' : 'Add New Income'}</Card.Title>
+                  <Form onSubmit={handleSubmit}>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formType" className="mb-3">
+                          <Form.Label>Type</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter income type"
+                            value={type}
+                            onChange={(e) => setType(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
 
-                    <Col md={6}>
-                      <Form.Group controlId="formAmount" className="mb-3">
-                        <Form.Label>Amount</Form.Label>
-                        <Form.Control
-                          type="number"
-                          step="0.01"
-                          placeholder="Enter amount"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formAmount" className="mb-3">
+                          <Form.Label>Amount</Form.Label>
+                          <Form.Control
+                            type="number"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group controlId="formDate" className="mb-3">
-                        <Form.Label>Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          value={date}
-                          onChange={(e) => setDate(e.target.value)}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formDate" className="mb-3">
+                          <Form.Label>Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
 
-                    <Col md={6}>
-                      <Form.Group controlId="formSource" className="mb-3">
-                        <Form.Label>Source</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter source of income"
-                          value={source}
-                          onChange={(e) => setSource(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formSource" className="mb-3">
+                          <Form.Label>Source</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter source of income"
+                            value={source}
+                            onChange={(e) => setSource(e.target.value)}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
-                  <div className="d-grid">
-                    {editId? (
+                    <div className="d-grid">
+                      {editId ? (
                         <div className="d-flex justify-content-center gap-2">
-                        <Button variant='warning' type='submit' size='lg'>
-                          Update 
-                        </Button>
-                        <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
-                          Cancel
-                        </Button>
-                      </div>
-                      
-                      ): (
+                          <Button variant='warning' type='submit' size='lg'>
+                            Update
+                          </Button>
+                          <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
+                            Cancel
+                          </Button>
+                        </div>
+
+                      ) : (
                         <Button variant='primary' type='submit' size='lg'>
                           Add Income
                         </Button>
                       )}
-                  </div>
-                </Form>
-              </Card.Body>
-            </Card>
+                    </div>
+                  </Form>
+                </Card.Body>
+              </Card>
 
-            {/* Table for displaying income records */}
-            <Card className="shadow-sm">
-              <Card.Body>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Button variant="secondary" onClick={handlePreviousMonth}>
-                    ◀️
-                  </Button>
-                  <Card.Title>Income List (Month: {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} )</Card.Title>
-                  <Button variant="secondary" onClick={handleNextMonth}>
+              {/* Table for displaying income records */}
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Button variant="secondary" onClick={handlePreviousMonth}>
+                      ◀️
+                    </Button>
+                    <Card.Title>Income List (Month: {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} )</Card.Title>
+                    <Button variant="secondary" onClick={handleNextMonth}>
                       ▶️
                     </Button>
-                </div>
-                <Table striped bordered hover responsive className="mt-3">
-                  <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
-                    <tr>
-                      <th>Type</th>
-                      <th>Amount</th>
-                      <th>Date</th>
-                      <th>Source</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredIncome.map((income) => (
-                      <tr key={income._id}>
-                        <td>{income.type}</td>
-                        <td>{income.amount.toFixed(2)}B</td>
-                        <td>{new Date(income.date).toLocaleDateString()}</td>
-                        <td>{income.source}</td>
-                        <td>
-                          <Button
-                            variant="success"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => handleEdit(income)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => openDeleteModal(income._id)}
-                          >
-                            Delete
-                          </Button>
-                        </td>
+                  </div>
+                  <Table striped bordered hover responsive className="mt-3">
+                    <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
+                      <tr>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Source</th>
+                        <th></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-                {incomeList.length === 0 && <p className="text-center">No income added yet.</p>}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+                    </thead>
+                    <tbody>
+                      {filteredIncome.map((income) => (
+                        <tr key={income._id}>
+                          <td>{income.type}</td>
+                          <td>{income.amount.toFixed(2)}B</td>
+                          <td>{new Date(income.date).toLocaleDateString()}</td>
+                          <td>{income.source}</td>
+                          <td>
+                            <Button
+                              variant="success"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => handleEdit(income)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => openDeleteModal(income._id)}
+                            >
+                              Delete
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan="3" style={{ textAlign: 'right' }}>
+                          <strong>Total Income:</strong>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>{totalIncome} B</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </Table>
+                  {incomeList.length === 0 && <p className="text-center">No income added yet.</p>}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
 
         </Col>
       </Row>
