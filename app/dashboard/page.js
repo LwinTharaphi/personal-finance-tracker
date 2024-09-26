@@ -153,7 +153,7 @@ export default function Dashboard() {
                         <Col md={4}>
                         <Card className="mb-4 shadow-sm">
                             <Card.Body>
-                            <Card.Title>Total Net Work</Card.Title>
+                            <Card.Title>Total Net Worth</Card.Title>
                             <h3>${totalNetWork.toFixed(2)}</h3>
                             <p>{totalNetWork >= 0 ? "You're within budget!" : "You're over budget!"}</p>
                             </Card.Body>

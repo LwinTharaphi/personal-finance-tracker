@@ -60,7 +60,7 @@ export default function ExpensePage() {
     };
 
     filterExpenseByMonth();
-  }, [expenses, selectedMonth, selectedYear]); 
+  }, [expenses, selectedMonth, selectedYear]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -127,7 +127,7 @@ export default function ExpensePage() {
     setEditId(expense._id);
   };
 
-  const handleCancelEdit = ()=>{
+  const handleCancelEdit = () => {
     setCategory('');
     setAmount('');
     setDate('');
@@ -173,7 +173,7 @@ export default function ExpensePage() {
       })
       .reduce((total, income) => total + income.amount, 0);
   };
-  
+
   const handlePreviousMonth = () => {
     setSelectedMonth((prevMonth) => {
       prevMonth = prevMonth - 1;
@@ -208,156 +208,165 @@ export default function ExpensePage() {
     <Container fluid>
       <Row>
         <Col md={3} className='p-0'>
-        <Sidebar/>
+          <Sidebar />
         </Col>
         <Col>
           <Row className="my-5">
-          <Col md={{ span: 8, offset: 2 }}>
-            <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Expense Tracker</h1>
+            <Col md={{ span: 8, offset: 2 }}>
+              <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Expense Tracker</h1>
 
-            {error && <Alert variant="danger">{error}</Alert>}
+              {error && <Alert variant="danger">{error}</Alert>}
 
-            {/* Card for form */}
-            <Card className="mb-4 shadow-sm" style={{ backgroundColor: '#f9f9f9' }}>
-              <Card.Body>
-                <Card.Title className="mb-3">{editId ? 'Edit Expense' : 'Add New Expense'}</Card.Title>
-                <Form onSubmit={handleSubmit}>
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group controlId="formCategory" className="mb-3">
-                        <Form.Label>Category</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter category"
-                          value={category}
-                          onChange={(e) => setCategory(e.target.value)}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
+              {/* Card for form */}
+              <Card className="mb-4 shadow-sm" style={{ backgroundColor: '#f9f9f9' }}>
+                <Card.Body>
+                  <Card.Title className="mb-3">{editId ? 'Edit Expense' : 'Add New Expense'}</Card.Title>
+                  <Form onSubmit={handleSubmit}>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formCategory" className="mb-3">
+                          <Form.Label>Category</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
 
-                    <Col md={6}>
-                      <Form.Group controlId="formAmount" className="mb-3">
-                        <Form.Label>Amount</Form.Label>
-                        <Form.Control
-                          type="number"
-                          step="0.01"
-                          placeholder="Enter amount"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formAmount" className="mb-3">
+                          <Form.Label>Amount</Form.Label>
+                          <Form.Control
+                            type="number"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group controlId="formDate" className="mb-3">
-                        <Form.Label>Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          value={date}
-                          onChange={(e) => setDate(e.target.value)}
-                          required
-                        />
-                      </Form.Group>
-                    </Col>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formDate" className="mb-3">
+                          <Form.Label>Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
 
-                    <Col md={6}>
-                      <Form.Group controlId="formDescription" className="mb-3">
-                        <Form.Label>Description</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter description"
-                          value={description}
-                          onChange={(e) => setDescription(e.target.value)}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formDescription" className="mb-3">
+                          <Form.Label>Description</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
-                  <div className="d-grid">
-                    {/* <Button variant={editId ? 'warning' : 'primary'} type="submit" size="lg">
+                    <div className="d-grid">
+                      {/* <Button variant={editId ? 'warning' : 'primary'} type="submit" size="lg">
                       {editId ? 'Update Expense' : 'Add Expense'}
                     </Button> */}
-                    {editId? (
-                      <div className="d-flex justify-content-center gap-2">
-                      <Button variant='warning' type='submit' size='lg'>
-                        Update 
-                      </Button>
-                      <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
-                        Cancel
-                      </Button>
+                      {editId ? (
+                        <div className="d-flex justify-content-center gap-2">
+                          <Button variant='warning' type='submit' size='lg'>
+                            Update
+                          </Button>
+                          <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button variant='primary' type='submit' size='lg'>
+                          Add Expense
+                        </Button>
+                      )}
                     </div>
-                    ): (
-                      <Button variant='primary' type='submit' size='lg'>
-                        Add Expense
-                      </Button>
-                    )}
-                  </div>
-                </Form>
-              </Card.Body>
-            </Card>
+                  </Form>
+                </Card.Body>
+              </Card>
 
-            {/* Table for displaying expenses */}
-            <Card className="shadow-sm">
-              <Card.Body>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Button variant="secondary" onClick={handlePreviousMonth}>
-                    ◀️
-                  </Button>
-                  <Card.Title>Expense List (Month: {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} )</Card.Title>
-                  <span style={{ fontSize: '1rem', color: '#28a745' }}>
-                    (Balance: {balanceByMonth.toFixed(2)}B)
-                  </span>
-                  <Button variant="secondary" onClick={handleNextMonth}>
-                    ▶️
-                  </Button>
-                </div>
-                <Table striped bordered hover responsive className="mt-3">
-                  <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
-                    <tr>
-                      <th>Category</th>
-                      <th>Amount</th>
-                      <th>Date</th>
-                      <th>Description</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredExpense.map((expense) => (
-                      <tr key={expense._id}>
-                        <td>{expense.category}</td>
-                        <td>{expense.amount.toFixed(2)}B</td>
-                        <td>{new Date(expense.date).toLocaleDateString()}</td>
-                        <td>{expense.description}</td>
-                        <td>
-                          <Button
-                            variant="success"
-                            size="sm"
-                            className="me-2"
-                            onClick={() => handleEdit(expense)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() => openDeleteModal(expense._id)}
-                          >
-                            Delete
-                          </Button>
-                        </td>
+              {/* Table for displaying expenses */}
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Button variant="secondary" onClick={handlePreviousMonth}>
+                      ◀️
+                    </Button>
+                    <Card.Title>Expense List (Month: {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} )</Card.Title>
+                    <span style={{ fontSize: '1rem', color: '#28a745' }}>
+                      (Balance: {balanceByMonth.toFixed(2)}B)
+                    </span>
+                    <Button variant="secondary" onClick={handleNextMonth}>
+                      ▶️
+                    </Button>
+                  </div>
+                  <Table striped bordered hover responsive className="mt-3">
+                    <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
+                      <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th></th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-                {expenses.length === 0 && <p className="text-center">No expenses added yet.</p>}
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+                    </thead>
+                    <tbody>
+                      {filteredExpense.map((expense) => (
+                        <tr key={expense._id}>
+                          <td>{expense.category}</td>
+                          <td>{expense.amount.toFixed(2)}B</td>
+                          <td>{new Date(expense.date).toLocaleDateString()}</td>
+                          <td>{expense.description}</td>
+                          <td>
+                            <Button
+                              variant="success"
+                              size="sm"
+                              className="me-2"
+                              onClick={() => handleEdit(expense)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => openDeleteModal(expense._id)}
+                            >
+                              Delete
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan="3" style={{ textAlign: 'right' }}>
+                          <strong>Total Expense:</strong>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>{totalExpensesByMonth} B</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </Table>
+                  {expenses.length === 0 && <p className="text-center">No expenses added yet.</p>}
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
 
         </Col>
       </Row>
