@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { Table, Form, Button, Container, Row, Col, Card, Alert, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/Sidebar';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import AccessDenied from '../components/accessDenied'
 
 export default function IncomePage() {
   const [incomeList, setIncomeList] = useState([]);
@@ -17,6 +20,21 @@ export default function IncomePage() {
   const [filteredIncome, setFilteredIncome] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const {data: session, status} = useSession();
+  const loading = status === "loading";
+  // const [userData,setUserData] = useState(null);
+  const router = useRouter()
+
+  // Redirect to home if no session
+  useEffect(() => {
+    if (!loading && !session) {
+      router.push('/');
+    }
+  }, [loading, session, router]);
+
+  // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
 
   useEffect(() => {
     // Fetch income data only once

@@ -2,10 +2,12 @@
 
 "use client"; // Client component
 
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import { useSession,signIn } from "next-auth/react"; // Import signIn from NextAuth
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Router from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const { data: session } = useSession()
@@ -16,10 +18,15 @@ export default function Home() {
     password: '',
     name: '', // Only needed for signup
   });
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleButton = () => {
+    router.push('/dashboard');
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -113,7 +120,8 @@ export default function Home() {
                   Sign in with GitHub
                 </Button> */}
                 {session ? (
-                  <h2>Welcome, {session.user.name}</h2>
+                  // <h2>Welcome, {session.user.name}</h2>
+                  <Button variant='secondary' onClick={handleButton}>Welcome,{session.user.name}</Button>
                   ) : (
                   <button onClick={() => signIn('github')}>Sign in with GitHub</button>
                   )}

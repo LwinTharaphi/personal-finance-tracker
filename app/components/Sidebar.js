@@ -66,8 +66,6 @@ const Sidebar = () => {
           LogOut
         </Nav.Link>
         
-        <button onClick={() => signOut({ callbackUrl: '/', redirect:true })}>LogOut</button>
-        
       </Nav>
     </div>
   );

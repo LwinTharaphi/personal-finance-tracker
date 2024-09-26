@@ -7,7 +7,9 @@ import Sidebar from '../components/Sidebar';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import AccessDenied from '../components/accessDenied';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
@@ -17,6 +19,21 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [incomeSelectedMonth, setIncomeSelectedMonth] = useState(new Date().getMonth());
   const [expenseSelectedMonth, setExpenseSelectedMonth] = useState(new Date().getMonth());
+  const {data: session, status} = useSession();
+  const loading = status === "loading";
+  // const [userData,setUserData] = useState(null);
+  const router = useRouter()
+
+  // Redirect to home if no session
+  useEffect(() => {
+    if (!loading && !session) {
+      router.push('/');
+    }
+  }, [loading, session, router]);
+
+  // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,6 +116,14 @@ export default function Dashboard() {
         },
       ],
     };
+
+    if (status === 'loading'){
+      return <p>Loading ...</p>;
+    }
+    if (!session){
+      router.push('/');
+      return null;
+    }
 
     return (
       <Card className='mb-4 shadow-sm'>

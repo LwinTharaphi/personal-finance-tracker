@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Form, Modal, Card, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/Sidebar';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import AccessDenied from '../components/accessDenied'
 
 export default function BudgetPage() {
   const [budgets, setBudgets] = useState([]);
@@ -12,6 +15,21 @@ export default function BudgetPage() {
   const [error, setError] = useState(null);
 
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const {data: session, status} = useSession();
+  const loading = status === 'loading'
+  // const [userData,setUserData] = useState(null);
+  const router = useRouter()
+
+  // Redirect to home if no session
+  useEffect(() => {
+    if (!loading && !session) {
+      router.push('/');
+    }
+  }, [loading, session, router]);
+
+  // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
 
   useEffect(() => {
     async function fetchData() {
