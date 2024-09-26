@@ -4,18 +4,32 @@ import { Nav } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation'; // Import usePathname
+import { useSession, signOut } from 'next-auth/react';
 import './Sidebar.css';
+import { useRouter } from 'next/router';
 
 const Sidebar = () => {
   const pathname = usePathname(); // Get the current route
-
+  const {data: session} = useSession();
+  
+  const handleLogOut = () => {
+    signOut('github')
+  }
   return (
     <div className="sidebar d-flex flex-column" style={{ width: '250px', height: '100%', padding: '20px' }}>
       <div className="profile-section text-center mb-4">
-        <h4 className="text-dark">Profile</h4>
-        {/* Profile image */}
-        {/* <img src="/profile-pic.jpg" alt="Profile" className="img-fluid mb-3 rounded-circle" style={{ width: '100px' }} /> */}
-        <h5 className="text-secondary">John Doe</h5>
+        {session?(
+          <>
+          <img src={session.user.image} alt='Profile_image' className='img-fluid mb-3 rounded-circle' style={{width:'100px'}}/>
+          <h5 className='text-secondary'>{session.user.name}</h5>
+          </>
+        ): (
+          <>
+          <h4 className="text-dark">Profile Image</h4>
+          <h5 className="text-secondary">Profile Name</h5>
+          </>
+        )}
+        
       </div>
 
       <Nav className="flex-column nav-links">
@@ -43,6 +57,17 @@ const Sidebar = () => {
           className={`sidebar-link ${pathname === '/budget' ? 'active' : ''}`}>
           Budget
         </Nav.Link>
+        <Nav.Link 
+          as={Link} 
+          href="/api/auth/signout"
+          className={`sidebar-link ${pathname === '/' ? 'active' : ''}`}
+          onClick={handleLogOut}
+        >
+          LogOut
+        </Nav.Link>
+        
+        <button onClick={() => signOut({ callbackUrl: '/', redirect:true })}>LogOut</button>
+        
       </Nav>
     </div>
   );

@@ -4,10 +4,11 @@
 
 import { useState } from 'react';
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
-import { signIn } from "next-auth/react"; // Import signIn from NextAuth
+import { useSession,signIn } from "next-auth/react"; // Import signIn from NextAuth
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Home() {
+  const { data: session } = useSession()
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and signup
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -44,10 +45,6 @@ export default function Home() {
     } catch (err: any) {
       setError(err.message);
     }
-  };
-
-  const handleGitHubSignIn = () => {
-    signIn('github'); // Redirect to GitHub for authentication
   };
 
   return (
@@ -111,9 +108,15 @@ export default function Home() {
                     {isLogin ? 'Sign Up' : 'Login'}
                   </Button>
                 </p>
-                <Button variant="secondary" onClick={handleGitHubSignIn} className="w-100">
+                
+                {/* <Button variant="secondary" onClick={handleGitHubSignIn} className="w-100">
                   Sign in with GitHub
-                </Button>
+                </Button> */}
+                {session ? (
+                  <h2>Welcome, {session.user.name}</h2>
+                  ) : (
+                  <button onClick={() => signIn('github')}>Sign in with GitHub</button>
+                  )}
               </div>
             </Card.Body>
           </Card>
@@ -121,4 +124,4 @@ export default function Home() {
       </Row>
     </Container>
   );
-}
+};
