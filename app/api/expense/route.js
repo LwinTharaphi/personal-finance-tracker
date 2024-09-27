@@ -34,7 +34,7 @@ export async function GET(req,res) {
     const expenses = await Expense.find({userId}).exec(); // Fetch all expense records
     return new Response(JSON.stringify(expenses.map((expense)=> expense.toObject())), { status: 200 });
   } catch (error) {
-    console.error('Error fetching income data:', error.message); // Log the error
+    console.error('Error fetching expense data:', error.message); // Log the error
     return new Response(JSON.stringify({ error: error.message }), { status: error.message === "Unauthorized" ? 401:500 });
   }
 }
@@ -57,7 +57,7 @@ export async function POST(req,res) {
     const newExpense = await Expense.create({...expenseData,userId: session.user.githubId}); // Create new expense record
     return new Response(JSON.stringify(newExpense), { status: 201 });
   } catch (error) {
-    console.error('Error creating income data:', error.message); // Log the error
+    console.error('Error creating expense data:', error.message); // Log the error
     return new Response(JSON.stringify({ error:error.message }), { status: error.message === "Unauthroized"? 401: 400 });
   }
 }

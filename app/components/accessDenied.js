@@ -5,7 +5,7 @@ export default function AccessDenied () {
     <>
       <h1>Access Denied</h1>
       <p>
-        <a href="/api/auth/signin"
+        <a href="/"
            onClick={(e) => {
            e.preventDefault()
            signIn()

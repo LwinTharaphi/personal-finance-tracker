@@ -23,7 +23,6 @@ export default function ExpensePage() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const {data: session, status} = useSession();
   const loading = status === 'loading'
-  // const [userData,setUserData] = useState(null);
   const router = useRouter()
 
   useEffect(() => {
@@ -57,13 +56,12 @@ export default function ExpensePage() {
 
     fetchData();
     fetchIncome();
-  }, []); // Run only once when the component mounts
+  }, [loading,router,session]); // Run only once when the component mounts
 
   // Render loading or access denied state
   if (loading) return <p>Loading ...</p>;
   if (!session) return <AccessDenied />;
   
-
   // Filter expenses based on selected month and year
   useEffect(() => {
     const filterExpenseByMonth = () => {
@@ -201,7 +199,6 @@ export default function ExpensePage() {
   };
 
   const handleNextMonth = () => {
-
     // Increment selectedMonth, handling year rollover
     setSelectedMonth((prevMonth) => {
       const nextMonth = prevMonth + 1;

@@ -21,12 +21,9 @@ export default function IncomePage() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const {data: session, status} = useSession();
-  const [data, setData] = useState('');
   const loading = status === "loading";
-  // const [userData,setUserData] = useState(null);
   const router = useRouter()
 
-  // // Redirect to home if no session
   useEffect(() => {
 
     const fetchIncome = async () => {
@@ -63,10 +60,7 @@ export default function IncomePage() {
       console.log(filteredIncome)
     };
 
-    // Only run the filtering when the dependency changes
-    if (incomeList.length > 0 && session.user.githubId) {
-      filterIncomeByMonth();
-    }
+    filterIncomeByMonth();
   }, [incomeList, selectedMonth, selectedYear]); // Dependencies for filtering
 
 

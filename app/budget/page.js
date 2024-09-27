@@ -24,32 +24,29 @@ export default function BudgetPage() {
   const loading = status === 'loading';
   const router = useRouter();
 
-  // Redirect to home if no session
   useEffect(() => {
-    if (!loading && !session) {
-      router.push('/');
-    }
-  }, [loading, session, router]);
+    async function fetchData() {
+      if (!loading && session && session.user.githubId) {
+        try {
+          const response = await fetch("/api/budget");
+          if (!response.ok) throw new Error('Error fetching budgets');
+          const data = await response.json();
+          setBudgets(data);
+        } catch (error) {
+          setError('Error fetching budgets. Please try again later.');
+          console.error('Error fetching budgets:', error);
+        }
+      } else if (!loading && !session) {
+        router.push('/');
+      }
+    }''
+
+    fetchData();
+  }, [loading,session,router]); // Run only once when the component mounts
 
   // Render loading or access denied state
   if (loading) return <p>Loading ...</p>;
   if (!session) return <AccessDenied />;
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("/api/budget");
-        if (!response.ok) throw new Error('Error fetching budgets');
-        const data = await response.json();
-        setBudgets(data);
-      } catch (error) {
-        setError('Error fetching budgets. Please try again later.');
-        console.error('Error fetching budgets:', error);
-      }
-    }
-
-    fetchData();
-  }, []); // Run only once when the component mounts
 
   // Filter budgets based on selected month and year
   useEffect(() => {
