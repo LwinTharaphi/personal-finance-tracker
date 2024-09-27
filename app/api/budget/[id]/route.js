@@ -1,12 +1,12 @@
-import dbConnect from '@/lib/mongodb'; 
-import Budget from '@/models/Budget'; 
+import dbConnect from '@/lib/mongodb'; // Ensure the path is correct
+import Budget from '@/models/Budget'; // Import the Budget model
 
-// GET a single budget by ID
+// GET request to fetch a single budget by ID
 export async function GET(req, { params }) {
   try {
-    await dbConnect(); 
-    const { id } = params; 
-    const budget = await Budget.findById(id); 
+    await dbConnect(); // Connect to MongoDB
+    const { id } = params;
+    const budget = await Budget.findById(id); // Fetch budget by ID
     if (!budget) {
       return new Response(JSON.stringify({ message: 'Budget not found' }), { status: 404 });
     }
@@ -20,10 +20,10 @@ export async function GET(req, { params }) {
 // PUT request to update a budget by ID
 export async function PUT(req, { params }) {
   try {
-    await dbConnect(); 
-    const { id } = params; 
-    const updatedData = await req.json(); 
-    const updatedBudget = await Budget.findByIdAndUpdate(id, updatedData, { new: true }); 
+    await dbConnect(); // Connect to MongoDB
+    const { id } = params;
+    const updatedData = await req.json(); // Get updated data from the request
+    const updatedBudget = await Budget.findByIdAndUpdate(id, updatedData, { new: true }); // Update budget
     if (!updatedBudget) {
       return new Response(JSON.stringify({ message: 'Budget not found' }), { status: 404 });
     }
@@ -34,12 +34,12 @@ export async function PUT(req, { params }) {
   }
 }
 
-// DELETE a budget by ID
+// DELETE request to delete a budget by ID
 export async function DELETE(req, { params }) {
   try {
-    await dbConnect(); 
-    const { id } = params; 
-    const deletedBudget = await Budget.findByIdAndDelete(id); 
+    await dbConnect(); // Connect to MongoDB
+    const { id } = params;
+    const deletedBudget = await Budget.findByIdAndDelete(id); // Delete budget by ID
     if (!deletedBudget) {
       return new Response(JSON.stringify({ message: 'Budget not found' }), { status: 404 });
     }

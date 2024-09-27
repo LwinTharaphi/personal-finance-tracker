@@ -1,6 +1,7 @@
-"use client";
+"use client"; // Add this line to make it a Client Component
+
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Form, Modal, Card, Alert } from 'react-bootstrap';
+import { Table, Form, Button, Container, Row, Col, Card, Alert, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/Sidebar';
 import { useSession } from 'next-auth/react';
@@ -9,16 +10,19 @@ import AccessDenied from '../components/accessDenied'
 
 export default function BudgetPage() {
   const [budgets, setBudgets] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [budgetAmount, setBudgetAmount] = useState('');
-  const [editMode, setEditMode] = useState(false);
-  const [error, setError] = useState(null);
-
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const {data: session, status} = useSession();
-  const loading = status === 'loading'
-  // const [userData,setUserData] = useState(null);
-  const router = useRouter()
+  const [category, setCategory] = useState('');
+  const [amount, setAmount] = useState('');
+  const [date, setDate] = useState('');
+  const [description, setDescription] = useState('');
+  const [editId, setEditId] = useState(null); // For tracking which budget to edit
+  const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false); // For delete confirmation
+  const [filteredBudgets, setFilteredBudgets] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+  const router = useRouter();
 
   // Redirect to home if no session
   useEffect(() => {
@@ -35,206 +39,311 @@ export default function BudgetPage() {
     async function fetchData() {
       try {
         const response = await fetch("/api/budget");
+        if (!response.ok) throw new Error('Error fetching budgets');
         const data = await response.json();
         setBudgets(data);
       } catch (error) {
-        setError('Error fetching budgets.');
+        setError('Error fetching budgets. Please try again later.');
         console.error('Error fetching budgets:', error);
       }
     }
+
     fetchData();
-  }, []);
+  }, []); // Run only once when the component mounts
 
-  const handleAddBudget = (month) => {
-    setSelectedMonth(month);
-    setEditMode(false);
-    setBudgetAmount(''); // Reset the budget amount for a new entry
-  };
-
-  const handleSaveBudget = async (event) => {
-    event.preventDefault();
-  
-    const newBudget = {
-      month: selectedMonth,
-      amount: parseFloat(budgetAmount),
+  // Filter budgets based on selected month and year
+  useEffect(() => {
+    const filterBudgetByMonth = () => {
+      const filtered = budgets.filter((budget) => {
+        const budgetDate = new Date(budget.date);
+        return budgetDate.getMonth() === selectedMonth && budgetDate.getFullYear() === selectedYear;
+      });
+      setFilteredBudgets(filtered);
     };
-  
+
+    filterBudgetByMonth();
+  }, [budgets, selectedMonth, selectedYear]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const newBudget = {
+      category,
+      amount: parseFloat(amount),
+      date,
+      description,
+    };
+
     try {
       let response;
-      if (editMode) {
-        // Update existing budget using PUT
-        const existingBudget = getBudgetByMonth(selectedMonth);
-        if (existingBudget) {
-          response = await fetch(`/api/budget/${existingBudget._id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newBudget),
-          });
-        }
+      if (editId) {
+        // Update budget
+        response = await fetch(`/api/budget/${editId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newBudget),
+        });
       } else {
-        // Add new budget using POST
+        // Add new budget
         response = await fetch('/api/budget', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify([newBudget]), // Send as array for backend
+          body: JSON.stringify(newBudget),
         });
       }
-  
+
       if (response.ok) {
         const addedOrUpdatedBudget = await response.json();
-  
-        if (editMode) {
-          // Update the existing budget in the state
-          setBudgets((prevBudgets) => prevBudgets.map((budget) =>
-            budget._id === addedOrUpdatedBudget._id ? addedOrUpdatedBudget : budget
-          ));
+        if (editId) {
+          // Update existing budget in state
+          setBudgets(
+            budgets.map((bud) => (bud._id === editId ? addedOrUpdatedBudget : bud))
+          );
         } else {
-          // Add new budget to the list, or replace if it already exists
-          setBudgets((prevBudgets) => {
-            const existing = prevBudgets.find(b => b.month === addedOrUpdatedBudget.month);
-            if (existing) {
-              // Replace the existing budget
-              return prevBudgets.map((budget) =>
-                budget.month === addedOrUpdatedBudget.month ? addedOrUpdatedBudget : budget
-              );
-            }
-            // Add the new budget
-            return [...prevBudgets, addedOrUpdatedBudget];
-          });
+          // Add new budget to the list
+          setBudgets([...budgets, addedOrUpdatedBudget]);
         }
-  
-        // Reset form and state
-        setBudgetAmount('');
-        setSelectedMonth(null); // Close the modal
-        setEditMode(false);
-        setError(null); // Clear any previous errors
+        setCategory('');
+        setAmount('');
+        setDate('');
+        setDescription('');
+        setEditId(null);
+        setError('');
       } else {
         setError('Error saving budget. Please check your input.');
       }
     } catch (error) {
       setError('Error saving budget. Please try again later.');
-      console.error('Error saving budget:', error);
     }
   };
-  
-  
 
-  const handleEditBudget = (month) => {
-    setSelectedMonth(month);
-    setEditMode(true);
-    const existingBudget = getBudgetByMonth(month);
-    setBudgetAmount(existingBudget?.amount || ''); // Set amount for editing
+  const handleEdit = (budget) => {
+    setCategory(budget.category);
+    setAmount(budget.amount);
+    setDate(budget.date.split('T')[0]);
+    setDescription(budget.description);
+    setEditId(budget._id);
   };
 
-  const handleDeleteBudget = async (month) => {
-    const budgetToDelete = budgets.find((budget) => budget.month === month);
+  const handleCancelEdit = () => {
+    setCategory('');
+    setAmount('');
+    setDate('');
+    setDescription('');
+    setEditId(null);
+  };
 
-    if (!budgetToDelete) {
-      setError('Budget not found for this month.');
-      return;
-    }
-
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/budget/${budgetToDelete._id}`, {
-        method: "DELETE",
+      const response = await fetch(`/api/budget/${editId}`, {
+        method: 'DELETE',
       });
 
       if (response.ok) {
-        const updatedBudgets = budgets.filter((budget) => budget.month !== month);
-        setBudgets(updatedBudgets);
-        setError(null);
+        setBudgets(budgets.filter((bud) => bud._id !== editId));
+        setEditId(null);
+        setShowModal(false);
       } else {
-        setError('Failed to delete budget. Please try again.');
+        setError('Error deleting budget.');
       }
     } catch (error) {
       setError('Error deleting budget.');
-      console.error('Error deleting budget:', error);
     }
   };
 
-  const getBudgetByMonth = (month) => {
-    return budgets.find((budget) => budget.month === month);
+  const openDeleteModal = (id) => {
+    setEditId(id);
+    setShowModal(true);
   };
 
+  const closeModal = () => {
+    setShowModal(false);
+    setEditId(null);
+  };
+  const handlePreviousMonth = () => {
+    setSelectedMonth((prevMonth) => {
+      prevMonth = prevMonth - 1;
+      if (prevMonth < 0) {
+        setSelectedYear(selectedYear - 1);
+        return 11;
+      }
+      return prevMonth;
+    });
+  };
+
+  const handleNextMonth = () => {
+
+    // Increment selectedMonth, handling year rollover
+    setSelectedMonth((prevMonth) => {
+      const nextMonth = prevMonth + 1;
+      if (nextMonth > 11) {
+        setSelectedYear(selectedYear + 1);
+        return 0;
+      }
+      return nextMonth;
+    });
+  };
+
+  const totalBudgetsByMonth = filteredBudgets.reduce((total, budget) => total + parseFloat(budget.amount), 0);
+
   return (
-    <Container fluid>
+    <Container fluid style={{ backgroundColor: '#E5EEF8' }}>
       <Row>
         <Col md={3} className='p-0'>
-        <Sidebar/>
+          <Sidebar />
         </Col>
         <Col>
-        <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Budget List</h1>
+          <Row className="my-5">
+            <Col md={{ span: 8, offset: 2 }}>
+              <h1 className="text-center mb-4" style={{ color: '#007bff' }}>Budget Manager</h1>
 
-        {error && <Alert variant="danger">{error}</Alert>}
+              {error && <Alert variant="danger">{error}</Alert>}
 
-        <Row>
-          {months.map((month) => {
-            const budget = getBudgetByMonth(month);
-            return (
-              <Col key={month} sm={6} md={4} lg={3} className="mb-4">
-                <Card className="border border-primary shadow-sm">
-                  <Card.Body>
-                    <Card.Title className="text-center mb-2 fw-bold">{month}</Card.Title>
-                    {budget ? (
-                      <>
-                        <Card.Text>Amount: {budget.amount} B</Card.Text>
-                        <div className="d-flex justify-content-center">
-                          <Button variant="primary" size="sm" className="me-2" onClick={() => handleEditBudget(month)}>
+              {/* Card for form */}
+              <Card className="mb-4 shadow-sm" style={{ backgroundColor: '#f9f9f9' }}>
+                <Card.Body>
+                  <Card.Title className="mb-3">{editId ? 'Edit Budget' : 'Add New Budget'}</Card.Title>
+                  <Form onSubmit={handleSubmit}>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formCategory" className="mb-3">
+                          <Form.Label>Category</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col md={6}>
+                        <Form.Group controlId="formAmount" className="mb-3">
+                          <Form.Label>Amount</Form.Label>
+                          <Form.Control
+                            type="number"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group controlId="formDate" className="mb-3">
+                          <Form.Label>Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            required
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col md={6}>
+                        <Form.Group controlId="formDescription" className="mb-3">
+                          <Form.Label>Description</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <div className="d-grid">
+                      {editId ? (
+                        <div className="d-flex justify-content-center gap-2">
+                          <Button variant='warning' type='submit' size='lg'>
                             Update
                           </Button>
-                          <Button variant="danger" size="sm" onClick={() => handleDeleteBudget(month)}>
-                            Delete
+                          <Button variant='secondary' size='lg' onClick={handleCancelEdit}>
+                            Cancel
                           </Button>
                         </div>
-                      </>
-                    ) : (
-                      <div className="d-flex justify-content-center">
-                        <Button variant="success" size="sm" onClick={() => handleAddBudget(month)}>
+                      ) : (
+                        <Button variant='primary' type='submit' size='lg'>
                           Add Budget
                         </Button>
-                      </div>
-                    )}
-                  </Card.Body>
-                </Card>
-              </Col>
-            );
-          })}
-        </Row>
-        
+                      )}
+                    </div>
+                  </Form>
+                </Card.Body>
+              </Card>
+
+              {/* Table for displaying budgets */}
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Button variant="secondary" onClick={handlePreviousMonth}>
+                      ◀️
+                    </Button>
+                    <Card.Title>Budget List (Month: {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })})</Card.Title>
+                    <Button variant="secondary" onClick={handleNextMonth}>
+                      ▶️
+                    </Button>
+                  </div>
+                  <Table striped bordered hover responsive className="mt-3">
+                    <thead style={{ backgroundColor: '#007bff', color: '#fff' }}>
+                      <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredBudgets.map((budget) => (
+                        <tr key={budget._id}>
+                          <td>{budget.category}</td>
+                          <td>${budget.amount.toFixed(2)}</td>
+                          <td>{new Date(budget.date).toLocaleDateString()}</td>
+                          <td>{budget.description}</td>
+                          <td className="d-flex justify-content-start">
+                            <Button variant='success' size='sm' className="me-2" onClick={() => handleEdit(budget)}>Edit</Button>
+                            <Button variant='danger' size='sm' onClick={() => openDeleteModal(budget._id)}>Delete</Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan="4" className="text-end fw-bold">Total:</td>
+                        <td className="fw-bold">${totalBudgetsByMonth.toFixed(2)}</td>
+                      </tr>
+                    </tfoot>
+                  </Table>
+                </Card.Body>
+              </Card>
+
+              {/* Delete confirmation modal */}
+              <Modal show={showModal} onHide={closeModal}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Confirm Deletion</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Are you sure you want to delete this budget item?</Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={closeModal}>Cancel</Button>
+                  <Button variant="danger" onClick={handleDelete}>Delete</Button>
+                </Modal.Footer>
+              </Modal>
+            </Col>
+          </Row>
         </Col>
       </Row>
-
-
-      <Modal show={selectedMonth !== null} onHide={() => setSelectedMonth(null)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editMode ? "Edit" : "Add"} Budget for {selectedMonth}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>Budget Amount</Form.Label>
-              <Form.Control
-                type="number"
-                value={budgetAmount}
-                onChange={(e) => setBudgetAmount(e.target.value)}
-                placeholder="Enter budget amount"
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setSelectedMonth(null)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSaveBudget}>
-            Save Budget
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </Container>
   );
 }

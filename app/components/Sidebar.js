@@ -20,7 +20,7 @@ const Sidebar = () => {
       <div className="profile-section text-center mb-4">
         {session?(
           <>
-          <img src={session.user.image} alt='Profile_image' className='img-fluid mb-3 rounded-circle' style={{width:'100px'}}/>
+          <img src={session.user.image} alt='Profile_image' className='img-fluid mb-3 rounded-circle ' style={{width:'150px', marginLeft:'30px'}}/>
           <h5 className='text-secondary'>{session.user.name}</h5>
           </>
         ): (
