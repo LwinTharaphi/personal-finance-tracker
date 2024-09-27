@@ -121,7 +121,7 @@ export default function Home() {
                 </Button> */}
                 {session ? (
                   // <h2>Welcome, {session.user.name}</h2>
-                  <Button variant='secondary' onClick={handleButton}>Welcome,{session.user.name}</Button>
+                  <Button variant='secondary' onClick={handleButton}>Welcome,{session.user.username}</Button>
                   ) : (
                   <button onClick={() => signIn('github')}>Sign in with GitHub</button>
                   )}
