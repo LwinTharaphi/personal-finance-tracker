@@ -1,10 +1,10 @@
-import dbConnect from '@/lib/mongodb'; 
+import connect from '@/lib/mongodb'; 
 import Budget from '@/models/Budget'; 
 
 // GET all budgets
 export async function GET(req) {
   try {
-    await dbConnect(); 
+    await connect(); 
     const budgets = await Budget.find({}); 
     return new Response(JSON.stringify(budgets), { status: 200 });
   } catch (error) {
@@ -17,7 +17,7 @@ export async function GET(req) {
 // POST new budget(s)
 export async function POST(req) {
   try {
-    await dbConnect();
+    await connect();
     const budgetsData = await req.json();
 
     const budgetArray = Array.isArray(budgetsData) ? budgetsData : [budgetsData];

@@ -1,10 +1,10 @@
-import dbConnect from '@/lib/mongodb'; 
+import connect from '@/lib/mongodb'; 
 import Budget from '@/models/Budget'; 
 
 // GET a single budget by ID
 export async function GET(req, { params }) {
   try {
-    await dbConnect(); 
+    await connect(); 
     const { id } = params; 
     const budget = await Budget.findById(id); 
     if (!budget) {
@@ -20,7 +20,7 @@ export async function GET(req, { params }) {
 // PUT request to update a budget by ID
 export async function PUT(req, { params }) {
   try {
-    await dbConnect(); 
+    await connect(); 
     const { id } = params; 
     const updatedData = await req.json(); 
     const updatedBudget = await Budget.findByIdAndUpdate(id, updatedData, { new: true }); 
@@ -37,7 +37,7 @@ export async function PUT(req, { params }) {
 // DELETE a budget by ID
 export async function DELETE(req, { params }) {
   try {
-    await dbConnect(); 
+    await connect(); 
     const { id } = params; 
     const deletedBudget = await Budget.findByIdAndDelete(id); 
     if (!deletedBudget) {

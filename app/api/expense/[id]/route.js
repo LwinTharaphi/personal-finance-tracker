@@ -1,10 +1,10 @@
-import dbConnect from '@/lib/mongodb'; // Ensure the path is correct
+import connect from '@/lib/mongodb'; // Ensure the path is correct
 import Expense from '@/models/Expense'; // Ensure the path is correct
 
 // GET request to fetch a single expense by ID
 export async function GET(req, { params }) {
   try {
-    await dbConnect(); // Connect to MongoDB
+    await connect(); // Connect to MongoDB
     const { id } = params;
     const expense = await Expense.findById(id);
     if (!expense) {
@@ -20,7 +20,7 @@ export async function GET(req, { params }) {
 // PUT request to update an expense by ID
 export async function PUT(req, { params }) {
   try {
-    await dbConnect(); // Connect to MongoDB
+    await connect(); // Connect to MongoDB
     const { id } = params;
     const updatedData = await req.json();
     const updatedExpense = await Expense.findByIdAndUpdate(id, updatedData, { new: true });
@@ -37,7 +37,7 @@ export async function PUT(req, { params }) {
 // DELETE request to delete an expense by ID
 export async function DELETE(req, { params }) {
   try {
-    await dbConnect(); // Connect to MongoDB
+    await connect(); // Connect to MongoDB
     const { id } = params;
     const deletedExpense = await Expense.findByIdAndDelete(id);
     if (!deletedExpense) {

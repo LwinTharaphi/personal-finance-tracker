@@ -37,18 +37,21 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const incomeResponse = await fetch('/api/income');
-        if (!incomeResponse.ok) throw new Error('Error fetching income data');
-        const incomeData = await incomeResponse.json();
-        setIncomeList(incomeData);
+      if (session){
+        try {
+          const incomeResponse = await fetch('/api/income');
+          if (!incomeResponse.ok) throw new Error('Error fetching income data');
+          const incomeData = await incomeResponse.json();
+          setIncomeList(incomeData);
+  
+          const expenseResponse = await fetch('/api/expense');
+          if (!expenseResponse.ok) throw new Error('Error fetching expense data');
+          const expenseData = await expenseResponse.json();
+          setExpenseList(expenseData);
+        } catch (error) {
+          setError(error.message);
+        }
 
-        const expenseResponse = await fetch('/api/expense');
-        if (!expenseResponse.ok) throw new Error('Error fetching expense data');
-        const expenseData = await expenseResponse.json();
-        setExpenseList(expenseData);
-      } catch (error) {
-        setError(error.message);
       }
     };
 
