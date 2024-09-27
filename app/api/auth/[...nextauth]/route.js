@@ -76,6 +76,7 @@ export const authOptions = {
       const user = await User.findOne({ githubId: token.githubId });
       if (user) {
         session.user = user;
+        session.user.profilePicture = token.picture;
       }
       return session;
     },

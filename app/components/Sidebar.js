@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation'; // Import usePathname
 import { useSession, signOut } from 'next-auth/react';
 import './Sidebar.css';
-import { useRouter } from 'next/router';
 
 const Sidebar = () => {
   const pathname = usePathname(); // Get the current route
@@ -20,8 +19,8 @@ const Sidebar = () => {
       <div className="profile-section text-center mb-4">
         {session?(
           <>
-          <img src={session.user.image} alt='Profile_image' className='img-fluid mb-3 rounded-circle ' style={{width:'150px', marginLeft:'30px'}}/>
-          <h5 className='text-secondary'>{session.user.name}</h5>
+          <img src={session.user.profilePicture} alt='Profile_image' className='img-fluid mb-3 rounded-circle ' style={{width:'150px', marginLeft:'30px'}}/>
+          <h5 className='text-secondary'>{session.user.username}</h5>
           </>
         ): (
           <>
