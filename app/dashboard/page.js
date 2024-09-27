@@ -38,12 +38,22 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const incomeResponse = await fetch('/api/income');
-        if (!incomeResponse.ok) throw new Error('Error fetching income data');
-        const incomeData = await incomeResponse.json();
-        setIncomeList(incomeData);
+      if (session){
+        try {
+          const incomeResponse = await fetch('/api/income');
+          if (!incomeResponse.ok) throw new Error('Error fetching income data');
+          const incomeData = await incomeResponse.json();
+          setIncomeList(incomeData);
+  
+          const expenseResponse = await fetch('/api/expense');
+          if (!expenseResponse.ok) throw new Error('Error fetching expense data');
+          const expenseData = await expenseResponse.json();
+          setExpenseList(expenseData);
+        } catch (error) {
+          setError(error.message);
+        }
 
+<<<<<<< HEAD
         const expenseResponse = await fetch('/api/expense');
         if (!expenseResponse.ok) throw new Error('Error fetching expense data');
         const expenseData = await expenseResponse.json();
@@ -56,6 +66,8 @@ export default function Dashboard() {
         setBudgetList(budgetData);
       } catch (error) {
         setError(error.message);
+=======
+>>>>>>> 68a1fcd578d763f771f4808dfed610f4f9166670
       }
     };
 
