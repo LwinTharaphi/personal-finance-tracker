@@ -26,29 +26,22 @@ export default function ExpensePage() {
   // const [userData,setUserData] = useState(null);
   const router = useRouter()
 
-  // Redirect to home if no session
-  useEffect(() => {
-    if (!loading && !session) {
-      router.push('/');
-    }
-  }, [loading, session, router]);
-
-  // Render loading or access denied state
-  if (loading) return <p>Loading ...</p>;
-  if (!session) return <AccessDenied />;
-
   useEffect(() => {
     async function fetchData() {
-      try {
-        const response = await fetch("/api/expense");
-        if (!response.ok) throw new Error('Error fetching expenses');
-        const data = await response.json();
-        setExpenses(data);
-      } catch (error) {
-        setError('Error fetching expenses. Please try again later.');
-        console.error('Error fetching expenses:', error);
+      if (!loading && session && session.user.githubId) {
+        try {
+          const response = await fetch("/api/expense");
+          if (!response.ok) throw new Error('Error fetching expenses.');
+          const data = await response.json();
+          setExpenses(data);
+        } catch (error) {
+          setError('Error fetching expenses. Please try again later.');
+          console.error('Error fetching expenses:', error);
+        }
+      } else if (!loading && !session) {
+        router.push('/');
       }
-    }
+    };
 
     async function fetchIncome() {
       try {
@@ -65,6 +58,11 @@ export default function ExpensePage() {
     fetchData();
     fetchIncome();
   }, []); // Run only once when the component mounts
+
+  // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
+  
 
   // Filter expenses based on selected month and year
   useEffect(() => {

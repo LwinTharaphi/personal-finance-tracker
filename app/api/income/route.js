@@ -41,16 +41,8 @@ export async function GET(req,res) {
 
 export async function POST(req,res) {
   try {
-    console.log('res.headers:', res.headers);
-    const session = await getServerSession(
-      req,
-      {
-        ...res,
-        getHeader: (name)=> res.headers ? res.headers.get(name) : null,
-        setHeader: (name,value)=> res.headers ? res.headers.set(name,value): null
-      },
-      authOptions
-    )
+    // console.log('res.headers:', res.headers);
+    const session = await ensureAuthenticated(req,res);
     
     const incomeData = await req.json(); // Parse request body
     const {amount,type,date,source} = incomeData;
