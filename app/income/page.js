@@ -1,6 +1,6 @@
 "use client"; // Add this line to make it a Client Component
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo} from 'react';
 import { Table, Form, Button, Container, Row, Col, Card, Alert, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/Sidebar';
@@ -21,57 +21,38 @@ export default function IncomePage() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const {data: session, status} = useSession();
+  const [data, setData] = useState('');
   const loading = status === "loading";
   // const [userData,setUserData] = useState(null);
   const router = useRouter()
 
-  // Redirect to home if no session
+  // // Redirect to home if no session
   useEffect(() => {
-    if (!loading && session && session.user?.id) {
-      fetch(`/api/income?userId=${session.user.id}`)
-      .then((res)=> res.json())
-      .then((data)=> setIncomeList(data))
-      .catch((error)=>{
-        setError('Error fetching incoe data');
-        console.error(error);
-      });
-    } else if (!loading && !session){
-      router.push('/');
-    }
 
-    // if (session){
-    //   fetch(`/api/income?userId=${session.user.id}`);
-    // }
-
-    // if (status === "authenticated"){
-    //   fetch(`/api/income?userId=${session.user.id}`)
-    //   .then((res)=>res.json())
-    //   .then((data)=> setIncomeList(data));
-    // }
-  }, [loading, session, router,status]);
+    const fetchIncome = async () => {
+      if (!loading && session && session.user.githubId) {
+        try {
+          const response = await fetch(`/api/income`);
+          if (!response.ok) throw new Error('Error fetching income data');
+          const data = await response.json();
+          console.log(data)
+          setIncomeList(data);
+        } catch (error) {
+          setError('Error fetching income data');
+          console.error(error);
+        }
+      } else if (!loading && !session) {
+        router.push('/');
+      }
+    };
+    fetchIncome();
+  }, [loading, session, router]);
+  
 
   // Render loading or access denied state
   if (loading) return <p>Loading ...</p>;
   if (!session) return <AccessDenied />;
 
-  // useEffect(() => {
-  //   // Fetch income data only once
-  //   async function fetchData() {
-  //     try {
-  //       const response = await fetch("/api/income");
-  //       if (!response.ok) throw new Error('Error fetching income data');
-  //       const data = await response.json();
-  //       setIncomeList(data);
-  //     } catch (error) {
-  //       setError('Error fetching income data. Please try again later.');
-  //       console.error('Error fetching income:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []); // Empty dependency array to fetch income only once on mount
-
-  // Filter income by month and year when incomeList, selectedMonth, or selectedYear change
   useEffect(() => {
     const filterIncomeByMonth = () => {
       const filtered = incomeList.filter((income) => {
@@ -79,10 +60,11 @@ export default function IncomePage() {
         return incomeDate.getMonth() === selectedMonth && incomeDate.getFullYear() === selectedYear;
       });
       setFilteredIncome(filtered);
+      console.log(filteredIncome)
     };
 
     // Only run the filtering when the dependency changes
-    if (incomeList.length > 0) {
+    if (incomeList.length > 0 && session.user.githubId) {
       filterIncomeByMonth();
     }
   }, [incomeList, selectedMonth, selectedYear]); // Dependencies for filtering
@@ -212,7 +194,9 @@ export default function IncomePage() {
       return nextMonth;
     });
   };
-  const totalIncome = filteredIncome.reduce((acc, income) => acc + income.amount, 0).toFixed(2);
+  const totalIncome = useMemo(() => {
+    return filteredIncome.reduce((acc, income) => acc + income.amount, 0).toFixed(2);
+  }, [filteredIncome]);
 
   return (
     <Container fluid>
@@ -331,6 +315,7 @@ export default function IncomePage() {
                       </tr>
                     </thead>
                     <tbody>
+  
                       {filteredIncome.map((income) => (
                         <tr key={income._id}>
                           <td>{income.type}</td>

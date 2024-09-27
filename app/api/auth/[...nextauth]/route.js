@@ -7,10 +7,7 @@ import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 // import Credentials from "next-auth/providers/credentials";
 import User from "@/models/User"
-// import mongoose from "mongoose";
-// import { signIn } from "next-auth/react";
-// import clientPromise from "@/lib/mongodb"
-// await dbConnect();
+
 export const authOptions = {
   // await dbConnect();
   providers: [
@@ -24,10 +21,6 @@ export const authOptions = {
       },
     }),
   ],
-  // adapter: MongoDBAdapter({
-  //   db: mongoose.connection.getClient(),
-  // }),
-  // adapter: MongoDBAdapter(clientPromise),
   secret: process.env.NEXTAUTH_SECRET, // Add your secret here
   session: {
     strategy: 'jwt',
@@ -56,22 +49,6 @@ export const authOptions = {
         return true;
       } 
       return false;
-      //   try {
-      //     const existingUser = await User.findOne({email: user.email});
-      //     if (!existingUser){
-      //       const newUser = new User({
-      //         email: user.email
-      //       });
-
-      //       await newUser.save();
-      //       return true;
-      //     }
-      //     return true
-      //   } catch(err){
-      //     console.log("Error saving user",err);
-      //     return false;
-      //   }
-      // }
 
     },
     async redirect({ url, baseUrl }) {
@@ -83,10 +60,21 @@ export const authOptions = {
       return baseUrl; // Redirect to base URL after sign-out
     },
     async session({ session, token }) {
-      if (token && token.githubId){
-        session.user.githubId = token.githubId;
-        // session.accessToken = token.accessToken;
-        // session.user.githubId = user.githubId || token.sub;
+      // if (token && token.githubId){
+      //   session.user.githubId = token.githubId;
+      //   // session.user.id = token.id
+      //   const user = await User.findById(token.id);
+      //   if (user){
+      //     session.user.id = user.id
+      //   }
+      //   // session.accessToken = token.accessToken;
+      //   // session.user.githubId = user.githubId || token.sub;
+      // }
+      // return session;
+      // Update session with user data from your database
+      const user = await User.findOne({ githubId: token.githubId });
+      if (user) {
+        session.user = user;
       }
       return session;
     },
