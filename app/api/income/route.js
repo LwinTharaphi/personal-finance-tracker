@@ -2,7 +2,7 @@ import dbConnect from '@/lib/mongodb'; // Ensure this path is correct
 import Income from '@/models/Income'; // Ensure this path is correct
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
-import { NextRequest, NextResponse } from 'next/server';
+
 
 async function ensureAuthenticated(req,res){
   const session = await getServerSession(

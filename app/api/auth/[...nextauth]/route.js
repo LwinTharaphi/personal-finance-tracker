@@ -1,3 +1,4 @@
+
 // app/api/auth/[...nextauth]/route.ts
 
 // import { MongoDBAdapter } from "@next-auth/mongodb-adapter";

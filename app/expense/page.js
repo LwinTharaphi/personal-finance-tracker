@@ -222,7 +222,7 @@ export default function ExpensePage() {
 
 
   return (
-    <Container fluid>
+    <Container fluid style={{ backgroundColor: '#E5EEF8' }}>
       <Row>
         <Col md={3} className='p-0'>
           <Sidebar />
@@ -349,7 +349,7 @@ export default function ExpensePage() {
                           <td>{expense.amount.toFixed(2)}B</td>
                           <td>{new Date(expense.date).toLocaleDateString()}</td>
                           <td>{expense.description}</td>
-                          <td>
+                          <td className="d-flex justify-content-start">
                             <Button
                               variant="success"
                               size="sm"
@@ -371,11 +371,8 @@ export default function ExpensePage() {
                     </tbody>
                     <tfoot>
                       <tr>
-                        <td colSpan="3" style={{ textAlign: 'right' }}>
-                          <strong>Total Expense:</strong>
-                        </td>
-                        <td style={{ textAlign: 'right' }}>{totalExpensesByMonth} B</td>
-                        <td></td>
+                        <td colSpan="4" className="text-end fw-bold">Total:</td>
+                        <td className="fw-bold">${totalExpensesByMonth.toFixed(2)}</td>
                       </tr>
                     </tfoot>
                   </Table>

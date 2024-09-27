@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 
 const BudgetSchema = new mongoose.Schema({
-  month: { type: String, unique: true, required: true }, // Ensure each month is unique
+  category: String,
   amount: Number,
+  date: Date,
+  description: String,
 }, { timestamps: true });
 
 

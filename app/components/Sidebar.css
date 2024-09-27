@@ -1,5 +1,6 @@
 .sidebar {
-  background-color: #cfd0d2; /* Light gray background */
+  background-color: #C1CFDD;
+  position: fixed; 
 }
 
 .profile-section h4 {
