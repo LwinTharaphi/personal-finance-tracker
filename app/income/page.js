@@ -39,37 +39,37 @@ export default function IncomePage() {
       router.push('/');
     }
 
-    // if (session){
-    //   fetch(`/api/income?userId=${session.user.id}`);
-    // }
+    if (session){
+      fetch(`/api/income?userId=${session.user.id}`);
+    }
 
-    // if (status === "authenticated"){
-    //   fetch(`/api/income?userId=${session.user.id}`)
-    //   .then((res)=>res.json())
-    //   .then((data)=> setIncomeList(data));
-    // }
+    if (status === "authenticated"){
+      fetch(`/api/income?userId=${session.user.id}`)
+      .then((res)=>res.json())
+      .then((data)=> setIncomeList(data));
+    }
   }, [loading, session, router,status]);
 
   // Render loading or access denied state
   if (loading) return <p>Loading ...</p>;
   if (!session) return <AccessDenied />;
 
-  // useEffect(() => {
-  //   // Fetch income data only once
-  //   async function fetchData() {
-  //     try {
-  //       const response = await fetch("/api/income");
-  //       if (!response.ok) throw new Error('Error fetching income data');
-  //       const data = await response.json();
-  //       setIncomeList(data);
-  //     } catch (error) {
-  //       setError('Error fetching income data. Please try again later.');
-  //       console.error('Error fetching income:', error);
-  //     }
-  //   }
+  useEffect(() => {
+    // Fetch income data only once
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/income");
+        if (!response.ok) throw new Error('Error fetching income data');
+        const data = await response.json();
+        setIncomeList(data);
+      } catch (error) {
+        setError('Error fetching income data. Please try again later.');
+        console.error('Error fetching income:', error);
+      }
+    }
 
-  //   fetchData();
-  // }, []); // Empty dependency array to fetch income only once on mount
+    fetchData();
+  }, []); // Empty dependency array to fetch income only once on mount
 
   // Filter income by month and year when incomeList, selectedMonth, or selectedYear change
   useEffect(() => {

@@ -1,10 +1,10 @@
-import connect from '@/lib/mongodb'; // Ensure the path is correct
+import dbConnect from '@/lib/mongodb'; // Ensure the path is correct
 import Income from '@/models/Income'; // Ensure the path is correct
 
 // Helper function to connect to MongoDB
 async function connectToDatabase() {
   try {
-    await connect(); // Connect to MongoDB
+    await dbConnect(); // Connect to MongoDB
   } catch (error) {
     console.error('Database connection error:', error);
     throw new Error('Database connection failed');
