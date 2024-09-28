@@ -48,6 +48,11 @@ export default function Dashboard() {
         if (!expenseResponse.ok) throw new Error('Error fetching expense data');
         const expenseData = await expenseResponse.json();
         setExpenseList(expenseData);
+
+        const budgetResponse = await fetch('/api/budget'); // Fetching budget data
+        if (!budgetResponse.ok) throw new Error('Error fetching budget data');
+        const budgetData = await budgetResponse.json();
+        setBudgetList(budgetData);
       } catch (error) {
         setError(error.message);
       }
@@ -185,7 +190,7 @@ export default function Dashboard() {
         </Col>
         <Col>
           <h3 className="text-center mb-8 mt-6"
-          style={{ fontFamily: 'Roboto, sans-serif', fontSize: '2.5rem', fontWeight: '500' }}>Welcome {session.user.name}!</h3>
+          style={{ fontFamily: 'Roboto, sans-serif', fontSize: '2.5rem', fontWeight: '500' }}>Welcome {session.user.username}!</h3>
           <h4 className='mb-8'
           style={{ fontFamily: 'Roboto, sans-serif', fontSize: '1.5rem', fontWeight: '500' }}>Manage your money! Master your life!</h4>
           {error && <Alert variant="danger">{error}</Alert>}

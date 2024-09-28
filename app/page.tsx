@@ -119,12 +119,20 @@ export default function Home() {
                 {/* <Button variant="secondary" onClick={handleGitHubSignIn} className="w-100">
                   Sign in with GitHub
                 </Button> */}
-                {session ? (
+                {/* {session ? 
+                (
                   // <h2>Welcome, {session.user.name}</h2>
-                  <Button variant='secondary' onClick={handleButton}>Welcome,{session.user.username}</Button>
-                  ) : (
+                  <Button variant='secondary' onClick={handleButton}>Sign in with Github</Button>
+                  ) : 
+                  (
                   <button onClick={() => signIn('github')}>Sign in with GitHub</button>
-                  )}
+                  )} */}
+
+
+
+                
+                  <button onClick={() => signIn('github')}>Sign in with GitHub</button>
+                  
               </div>
             </Card.Body>
           </Card>

@@ -39,21 +39,28 @@ export async function GET(req,res) {
   }
 }
 
-export async function POST(req,res) {
+// POST request to create a new income
+export async function POST(req, res) {
   try {
-    // console.log('res.headers:', res.headers);
-    const session = await ensureAuthenticated(req,res);
-    
+    const session = await ensureAuthenticated(req, res);
     const incomeData = await req.json(); // Parse request body
-    const {amount,type,date,source} = incomeData;
-    if (!amount || !type || !date || !source){
-      return new Response(JSON.stringify({error: "Invalid input data"}),{status: 400});
+    
+    // Validate income data
+    if (!incomeData || Object.keys(incomeData).length === 0) {
+      return new Response(JSON.stringify({ error: 'Invalid income data' }), { status: 400 });
     }
-    const newIncome = await Income.create({...incomeData,userId:session.user.githubId}); // Create new income record
-    // return new Response(JSON.stringify(newIncome), { status: 201 });
-    return NextResponse.json(newIncome,{status:201});
+
+    const { amount, source, date } = incomeData;
+    if (!amount || !source || !date) {
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+    }
+    
+    // Create new income record
+    const newIncome = await Income.create({ ...incomeData, userId: session.user.githubId });
+    return new Response(JSON.stringify(newIncome), { status: 201 });
   } catch (error) {
     console.error('Error creating income data:', error.message); // Log the error
-    return new Response(JSON.stringify({ error:error.message }), { status: error.message === "Unauthroized"? 401: 400 });
+    return new Response(JSON.stringify({ error: error.message }), { status: error.message === "Unauthorized" ? 401 : 400 });
   }
 }
+

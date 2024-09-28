@@ -193,7 +193,7 @@ export default function IncomePage() {
   }, [filteredIncome]);
 
   return (
-    <Container fluid>
+    <Container fluid style={{ backgroundColor: '#E5EEF8' }}>
       <Row>
         <Col md={3} className='p-0'>
           <Sidebar />
@@ -316,7 +316,7 @@ export default function IncomePage() {
                           <td>{income.amount.toFixed(2)}B</td>
                           <td>{new Date(income.date).toLocaleDateString()}</td>
                           <td>{income.source}</td>
-                          <td>
+                          <td className="d-flex justify-content-start">
                             <Button
                               variant="success"
                               size="sm"
@@ -338,10 +338,8 @@ export default function IncomePage() {
                     </tbody>
                     <tfoot>
                       <tr>
-                        <td colSpan="3" style={{ textAlign: 'right' }}>
-                          <strong>Total Income:</strong>
-                        </td>
-                        <td style={{ textAlign: 'right' }}>{totalIncome} B</td>
+                      <td colSpan="4" className="text-end fw-bold">Total:</td>
+                        <td className="fw-bold">{totalIncome} B</td>
                         <td></td>
                       </tr>
                     </tfoot>
