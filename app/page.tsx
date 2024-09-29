@@ -2,15 +2,15 @@
 
 "use client"; // Client component
 
-import { useReducer, useState } from 'react';
+import { useState } from 'react';
 import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
-import { useSession,signIn } from "next-auth/react"; // Import signIn from NextAuth
+import { signIn } from "next-auth/react"; // Import signIn from NextAuth
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Router from 'next/navigation';
+// import Router from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const { data: session } = useSession()
+  // const { data: session } = useSession()
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and signup
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
@@ -24,9 +24,9 @@ export default function Home() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleButton = () => {
-    router.push('/dashboard');
-  }
+  // const handleButton = () => {
+  //   router.push('/dashboard');
+  // }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,8 +49,8 @@ export default function Home() {
       // Handle successful login or signup
       console.log(result);
       alert(`${isLogin ? 'Login' : 'Signup'} successful!`);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (error) {
+      setError("error.message");
     }
   };
 
@@ -115,22 +115,6 @@ export default function Home() {
                     {isLogin ? 'Sign Up' : 'Login'}
                   </Button>
                 </p>
-                
-                {/* <Button variant="secondary" onClick={handleGitHubSignIn} className="w-100">
-                  Sign in with GitHub
-                </Button> */}
-                {/* {session ? 
-                (
-                  // <h2>Welcome, {session.user.name}</h2>
-                  <Button variant='secondary' onClick={handleButton}>Sign in with Github</Button>
-                  ) : 
-                  (
-                  <button onClick={() => signIn('github')}>Sign in with GitHub</button>
-                  )} */}
-
-
-
-                
                   <button onClick={() => signIn('github')}>Sign in with GitHub</button>
                   
               </div>
