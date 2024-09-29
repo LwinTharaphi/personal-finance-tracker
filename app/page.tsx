@@ -7,8 +7,6 @@ import { Form, Button, Container, Row, Col, Card, Alert } from 'react-bootstrap'
 import { signIn } from "next-auth/react"; // Import signIn from NextAuth
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import Router from 'next/navigation';
-import { useRouter } from 'next/navigation';
-
 export default function Home() {
   // const { data: session } = useSession()
   const [isLogin, setIsLogin] = useState(true); // Toggle between login and signup
@@ -18,7 +16,6 @@ export default function Home() {
     password: '',
     name: '', // Only needed for signup
   });
-  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
