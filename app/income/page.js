@@ -1,6 +1,6 @@
 "use client"; // Add this line to make it a Client Component
 
-import { useState, useEffect, useMemo} from 'react';
+import { useState, useEffect} from 'react';
 import { Table, Form, Button, Container, Row, Col, Card, Alert, Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/Sidebar';
@@ -45,11 +45,6 @@ export default function IncomePage() {
     fetchIncome();
   }, [loading, session, router]);
   
-
-  // Render loading or access denied state
-  if (loading) return <p>Loading ...</p>;
-  if (!session) return <AccessDenied />;
-
   useEffect(() => {
     const filterIncomeByMonth = () => {
       const filtered = incomeList.filter((income) => {
@@ -188,12 +183,17 @@ export default function IncomePage() {
       return nextMonth;
     });
   };
-  const totalIncome = useMemo(() => {
-    return filteredIncome.reduce((acc, income) => acc + income.amount, 0).toFixed(2);
-  }, [filteredIncome]);
+  const totalIncome = filteredIncome.reduce((acc, income) => acc + income.amount, 0).toFixed(2);
+  // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
-    <Container fluid style={{ backgroundColor: '#E5EEF8' }}>
+    <Container fluid>
       <Row>
         <Col md={3} className='p-0'>
           <Sidebar />
@@ -316,7 +316,7 @@ export default function IncomePage() {
                           <td>{income.amount.toFixed(2)}B</td>
                           <td>{new Date(income.date).toLocaleDateString()}</td>
                           <td>{income.source}</td>
-                          <td className="d-flex justify-content-start">
+                          <td>
                             <Button
                               variant="success"
                               size="sm"
@@ -338,8 +338,10 @@ export default function IncomePage() {
                     </tbody>
                     <tfoot>
                       <tr>
-                      <td colSpan="4" className="text-end fw-bold">Total:</td>
-                        <td className="fw-bold">{totalIncome} B</td>
+                        <td colSpan="3" style={{ textAlign: 'right' }}>
+                          <strong>Total Income:</strong>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>{totalIncome} B</td>
                         <td></td>
                       </tr>
                     </tfoot>

@@ -58,7 +58,7 @@ const Sidebar = () => {
         </Nav.Link>
         <Nav.Link 
           as={Link} 
-          href="/api/auth/signout"
+          href={`${process.env.NEXT_URL}/auth/signout`}
           className={`sidebar-link ${pathname === '/' ? 'active' : ''}`}
           onClick={handleLogOut}
         >

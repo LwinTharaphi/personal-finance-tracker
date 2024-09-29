@@ -58,10 +58,6 @@ export default function ExpensePage() {
     fetchIncome();
   }, [loading,router,session]); // Run only once when the component mounts
 
-  // Render loading or access denied state
-  if (loading) return <p>Loading ...</p>;
-  if (!session) return <AccessDenied />;
-  
   // Filter expenses based on selected month and year
   useEffect(() => {
     const filterExpenseByMonth = () => {
@@ -214,6 +210,14 @@ export default function ExpensePage() {
 
   const totalExpensesByMonth = filteredExpense.reduce((total, expense) => total + parseFloat(expense.amount), 0);
   const balanceByMonth = totalIncomeByMonth - totalExpensesByMonth;
+
+    // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
 
   return (

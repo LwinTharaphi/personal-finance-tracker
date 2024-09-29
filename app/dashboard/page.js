@@ -1,7 +1,7 @@
 "use client"; // Client component
 
 import { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Table, Alert, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Sidebar from '../components/Sidebar';
 import { Bar } from 'react-chartjs-2';
@@ -20,7 +20,6 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [incomeSelectedMonth, setIncomeSelectedMonth] = useState(new Date().getMonth());
   const [expenseSelectedMonth, setExpenseSelectedMonth] = useState(new Date().getMonth());
-  // const [budgetSelectedMonth, setBudgetSelectedMonth] = useState(new Date().getMonth());
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const router = useRouter();
@@ -31,10 +30,6 @@ export default function Dashboard() {
       router.push('/');
     }
   }, [loading, session, router]);
-
-  // Render loading or access denied state
-  if (loading) return <p>Loading ...</p>;
-  if (!session) return <AccessDenied />;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,13 +56,6 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  // Function to calculate total income, expenses, and net worth
-  // const totalIncome = incomeList.reduce((total, income) => total + income.amount, 0);
-  // const totalExpenses = expenseList.reduce((total, expense) => total + expense.amount, 0);
-  // const totalBudget = expenseList.reduce((total, budget) => total + budget.amount, 0);
-  // const totalNetWork = totalIncome - totalExpenses;
-
-  // Function to aggregate monthly data
   const getMonthlyData = (data) => {
     const monthlyTotals = Array(12).fill(0);
     data.forEach(item => {
@@ -181,6 +169,15 @@ export default function Dashboard() {
 
  const currentMonthIndex = new Date().getMonth(); // Get current month (0-11)
  const currentMonthName = monthNames[currentMonthIndex]; // Get current month name
+
+ 
+  // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <Container fluid style={{ backgroundColor: '#E5EEF8' }}>

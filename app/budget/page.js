@@ -44,10 +44,6 @@ export default function BudgetPage() {
     fetchData();
   }, [loading,session,router]); // Run only once when the component mounts
 
-  // Render loading or access denied state
-  if (loading) return <p>Loading ...</p>;
-  if (!session) return <AccessDenied />;
-
   // Filter budgets based on selected month and year
   useEffect(() => {
     const filterBudgetByMonth = () => {
@@ -186,6 +182,14 @@ export default function BudgetPage() {
   };
 
   const totalBudgetsByMonth = filteredBudgets.reduce((total, budget) => total + parseFloat(budget.amount), 0);
+
+  // Render loading or access denied state
+  if (loading) return <p>Loading ...</p>;
+  if (!session) return <AccessDenied />;
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <Container fluid style={{ backgroundColor: '#E5EEF8' }}>
