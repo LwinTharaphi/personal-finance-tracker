@@ -1,7 +1,7 @@
 import dbConnect from '@/lib/mongodb'; // Ensure the path is correct
 import Budget from '@/models/Budget'; // Import the Budget model
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import {authOptions} from "@/lib/auth"
 
 
 async function ensureAuthenticated(req,res){
