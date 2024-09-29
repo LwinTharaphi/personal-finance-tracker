@@ -68,6 +68,7 @@ To use the **Car Analytics Dashboard** application, follow these steps:
 ## Demo
 
 You can see the demostration video in this video.
+
 [![Watch the video](https://img.youtube.com/vi/qAmjskE3d8Y/hqdefault.jpg)](https://www.youtube.com/watch?v=qAmjskE3d8Y)
 
 
