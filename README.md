@@ -68,8 +68,8 @@ To use the **Car Analytics Dashboard** application, follow these steps:
 ## Demo
 
 You can see the demostration video in this video.
-[![Watch Demostration](https://img.youtube.com/vi/qAmjskE3d8Y/0.jpg)]
-(https://youtu.be/qAmjskE3d8Y "Watch Demostration")
+[![Term Project 2 Personal-finance-tracker](https://img.youtube.com/vi/qAmjskE3d8Y/0.jpg)]
+(https://youtu.be/qAmjskE3d8Y "Term Project 2 Personal-finance-tracker")
 
 You can also view a live demo of the application at [Live Demo](https://personal-finance-tracker-ashy.vercel.app/) (if applicable).
 
